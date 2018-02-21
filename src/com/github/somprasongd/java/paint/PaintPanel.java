@@ -7,26 +7,23 @@ package com.github.somprasongd.java.paint;
 
 import annotation.AnnotationLocationPanel;
 import annotation.AnnotationObject;
+import annotation.AnnotationOvalObject;
+import annotation.AnnotationQuadArrowObject;
+import annotation.AnnotationRectObject;
 import annotation.util.BufferedImageTool;
-import annotation.util.ImageIOFileFilter;
 import java.awt.Cursor;
 import java.awt.Dimension;
-import java.awt.Graphics2D;
 import java.awt.MediaTracker;
 import java.awt.Point;
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Vector;
 import javax.imageio.ImageIO;
-import javax.imageio.ImageWriter;
-import javax.imageio.stream.FileImageOutputStream;
-import javax.imageio.stream.ImageOutputStream;
 import javax.swing.JFileChooser;
-import javax.swing.JOptionPane;
 
 /**
  *
@@ -60,6 +57,7 @@ public class PaintPanel extends javax.swing.JPanel {
     private ArrayList tempObjects;
     private int img_width;
     private int img_height;
+    private boolean filled;
 
     /**
      * Creates new form PaintPanel
@@ -79,11 +77,7 @@ public class PaintPanel extends javax.swing.JPanel {
     private void initComponents() {
 
         buttonGroupAction = new javax.swing.ButtonGroup();
-        panelToolbar = new javax.swing.JPanel();
-        toolbar = new javax.swing.JToolBar();
-        btnZoomIn = new javax.swing.JButton();
-        btnZoomOut = new javax.swing.JButton();
-        btnZoomReset = new javax.swing.JButton();
+        topToolbar = new javax.swing.JToolBar();
         tglBtnSelect = new javax.swing.JToggleButton();
         jSeparator1 = new javax.swing.JToolBar.Separator();
         tglBtnDraw = new javax.swing.JToggleButton();
@@ -91,60 +85,28 @@ public class PaintPanel extends javax.swing.JPanel {
         tglBtnDrawRectangle = new javax.swing.JToggleButton();
         tglBtnDrawOval = new javax.swing.JToggleButton();
         tglBtnDrawArrow = new javax.swing.JToggleButton();
+        jToggleButton2 = new javax.swing.JToggleButton();
+        btnColor = new javax.swing.JButton();
+        jSeparator2 = new javax.swing.JToolBar.Separator();
         tglBtnDrawText = new javax.swing.JToggleButton();
         tglBtnDrawNote = new javax.swing.JToggleButton();
-        jSeparator2 = new javax.swing.JToolBar.Separator();
         jSeparator3 = new javax.swing.JToolBar.Separator();
         btnSave = new javax.swing.JButton();
         panelDraw = new javax.swing.JPanel();
         scrollPane = new javax.swing.JScrollPane();
+        bottomToolbar = new javax.swing.JToolBar();
+        btnZoomReset = new javax.swing.JButton();
+        btnZoomOut = new javax.swing.JButton();
+        btnZoomIn = new javax.swing.JButton();
 
         setLayout(new java.awt.BorderLayout());
 
-        panelToolbar.setLayout(new java.awt.GridBagLayout());
-
-        toolbar.setFloatable(false);
-        toolbar.setRollover(true);
-
-        btnZoomIn.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/github/somprasongd/java/paint/icons/zoomIn.png"))); // NOI18N
-        java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("com/github/somprasongd/java/paint/Bundle"); // NOI18N
-        btnZoomIn.setToolTipText(bundle.getString("ZOOM_IN")); // NOI18N
-        btnZoomIn.setFocusable(false);
-        btnZoomIn.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        btnZoomIn.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        btnZoomIn.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnZoomInActionPerformed(evt);
-            }
-        });
-        toolbar.add(btnZoomIn);
-
-        btnZoomOut.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/github/somprasongd/java/paint/icons/zoomOut.png"))); // NOI18N
-        btnZoomOut.setToolTipText(bundle.getString("ZOOM_OUT")); // NOI18N
-        btnZoomOut.setFocusable(false);
-        btnZoomOut.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        btnZoomOut.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        btnZoomOut.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnZoomOutActionPerformed(evt);
-            }
-        });
-        toolbar.add(btnZoomOut);
-
-        btnZoomReset.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/github/somprasongd/java/paint/icons/1-1.png"))); // NOI18N
-        btnZoomReset.setToolTipText(bundle.getString("ONE_TO_ONE")); // NOI18N
-        btnZoomReset.setFocusable(false);
-        btnZoomReset.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        btnZoomReset.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        btnZoomReset.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnZoomResetActionPerformed(evt);
-            }
-        });
-        toolbar.add(btnZoomReset);
+        topToolbar.setFloatable(false);
+        topToolbar.setRollover(true);
 
         buttonGroupAction.add(tglBtnSelect);
         tglBtnSelect.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/github/somprasongd/java/paint/icons/draw_cursor.png"))); // NOI18N
+        java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("com/github/somprasongd/java/paint/Bundle"); // NOI18N
         tglBtnSelect.setToolTipText(bundle.getString("SELECT")); // NOI18N
         tglBtnSelect.setFocusable(false);
         tglBtnSelect.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
@@ -154,8 +116,8 @@ public class PaintPanel extends javax.swing.JPanel {
                 tglBtnSelectActionPerformed(evt);
             }
         });
-        toolbar.add(tglBtnSelect);
-        toolbar.add(jSeparator1);
+        topToolbar.add(tglBtnSelect);
+        topToolbar.add(jSeparator1);
 
         buttonGroupAction.add(tglBtnDraw);
         tglBtnDraw.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/github/somprasongd/java/paint/icons/draw_free_hand.png"))); // NOI18N
@@ -168,7 +130,7 @@ public class PaintPanel extends javax.swing.JPanel {
                 tglBtnDrawActionPerformed(evt);
             }
         });
-        toolbar.add(tglBtnDraw);
+        topToolbar.add(tglBtnDraw);
 
         buttonGroupAction.add(tglBtnDrawLine);
         tglBtnDrawLine.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/github/somprasongd/java/paint/icons/draw_line.png"))); // NOI18N
@@ -181,7 +143,7 @@ public class PaintPanel extends javax.swing.JPanel {
                 tglBtnDrawLineActionPerformed(evt);
             }
         });
-        toolbar.add(tglBtnDrawLine);
+        topToolbar.add(tglBtnDrawLine);
 
         buttonGroupAction.add(tglBtnDrawRectangle);
         tglBtnDrawRectangle.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/github/somprasongd/java/paint/icons/draw_square.png"))); // NOI18N
@@ -194,7 +156,7 @@ public class PaintPanel extends javax.swing.JPanel {
                 tglBtnDrawRectangleActionPerformed(evt);
             }
         });
-        toolbar.add(tglBtnDrawRectangle);
+        topToolbar.add(tglBtnDrawRectangle);
 
         buttonGroupAction.add(tglBtnDrawOval);
         tglBtnDrawOval.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/github/somprasongd/java/paint/icons/draw_circle.png"))); // NOI18N
@@ -207,7 +169,7 @@ public class PaintPanel extends javax.swing.JPanel {
                 tglBtnDrawOvalActionPerformed(evt);
             }
         });
-        toolbar.add(tglBtnDrawOval);
+        topToolbar.add(tglBtnDrawOval);
 
         buttonGroupAction.add(tglBtnDrawArrow);
         tglBtnDrawArrow.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/github/somprasongd/java/paint/icons/draw_right.png"))); // NOI18N
@@ -220,7 +182,21 @@ public class PaintPanel extends javax.swing.JPanel {
                 tglBtnDrawArrowActionPerformed(evt);
             }
         });
-        toolbar.add(tglBtnDrawArrow);
+        topToolbar.add(tglBtnDrawArrow);
+
+        jToggleButton2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/github/somprasongd/java/paint/icons/fillColor.png"))); // NOI18N
+        jToggleButton2.setToolTipText(bundle.getString("FILL_COLOR")); // NOI18N
+        jToggleButton2.setFocusable(false);
+        jToggleButton2.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        jToggleButton2.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        topToolbar.add(jToggleButton2);
+
+        btnColor.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/github/somprasongd/java/paint/icons/selectColor.png"))); // NOI18N
+        btnColor.setFocusable(false);
+        btnColor.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnColor.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        topToolbar.add(btnColor);
+        topToolbar.add(jSeparator2);
 
         buttonGroupAction.add(tglBtnDrawText);
         tglBtnDrawText.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/github/somprasongd/java/paint/icons/draw_text.png"))); // NOI18N
@@ -233,7 +209,7 @@ public class PaintPanel extends javax.swing.JPanel {
                 tglBtnDrawTextActionPerformed(evt);
             }
         });
-        toolbar.add(tglBtnDrawText);
+        topToolbar.add(tglBtnDrawText);
 
         buttonGroupAction.add(tglBtnDrawNote);
         tglBtnDrawNote.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/github/somprasongd/java/paint/icons/draw_note.png"))); // NOI18N
@@ -246,9 +222,8 @@ public class PaintPanel extends javax.swing.JPanel {
                 tglBtnDrawNoteActionPerformed(evt);
             }
         });
-        toolbar.add(tglBtnDrawNote);
-        toolbar.add(jSeparator2);
-        toolbar.add(jSeparator3);
+        topToolbar.add(tglBtnDrawNote);
+        topToolbar.add(jSeparator3);
 
         btnSave.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/github/somprasongd/java/paint/icons/save.png"))); // NOI18N
         btnSave.setToolTipText(bundle.getString("SAVE")); // NOI18N
@@ -260,11 +235,9 @@ public class PaintPanel extends javax.swing.JPanel {
                 btnSaveActionPerformed(evt);
             }
         });
-        toolbar.add(btnSave);
+        topToolbar.add(btnSave);
 
-        panelToolbar.add(toolbar, new java.awt.GridBagConstraints());
-
-        add(panelToolbar, java.awt.BorderLayout.NORTH);
+        add(topToolbar, java.awt.BorderLayout.NORTH);
 
         panelDraw.setLayout(new java.awt.BorderLayout());
 
@@ -273,6 +246,47 @@ public class PaintPanel extends javax.swing.JPanel {
         panelDraw.add(scrollPane, java.awt.BorderLayout.CENTER);
 
         add(panelDraw, java.awt.BorderLayout.CENTER);
+
+        bottomToolbar.setFloatable(false);
+        bottomToolbar.setRollover(true);
+
+        btnZoomReset.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/github/somprasongd/java/paint/icons/1-1.png"))); // NOI18N
+        btnZoomReset.setToolTipText(bundle.getString("ONE_TO_ONE")); // NOI18N
+        btnZoomReset.setFocusable(false);
+        btnZoomReset.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnZoomReset.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnZoomReset.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnZoomResetActionPerformed(evt);
+            }
+        });
+        bottomToolbar.add(btnZoomReset);
+
+        btnZoomOut.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/github/somprasongd/java/paint/icons/zoomOut.png"))); // NOI18N
+        btnZoomOut.setToolTipText(bundle.getString("ZOOM_OUT")); // NOI18N
+        btnZoomOut.setFocusable(false);
+        btnZoomOut.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnZoomOut.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnZoomOut.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnZoomOutActionPerformed(evt);
+            }
+        });
+        bottomToolbar.add(btnZoomOut);
+
+        btnZoomIn.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/github/somprasongd/java/paint/icons/zoomIn.png"))); // NOI18N
+        btnZoomIn.setToolTipText(bundle.getString("ZOOM_IN")); // NOI18N
+        btnZoomIn.setFocusable(false);
+        btnZoomIn.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnZoomIn.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnZoomIn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnZoomInActionPerformed(evt);
+            }
+        });
+        bottomToolbar.add(btnZoomIn);
+
+        add(bottomToolbar, java.awt.BorderLayout.SOUTH);
     }// </editor-fold>//GEN-END:initComponents
 
     private void tglBtnSelectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tglBtnSelectActionPerformed
@@ -328,6 +342,8 @@ public class PaintPanel extends javax.swing.JPanel {
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JToolBar bottomToolbar;
+    private javax.swing.JButton btnColor;
     private javax.swing.JButton btnSave;
     private javax.swing.JButton btnZoomIn;
     private javax.swing.JButton btnZoomOut;
@@ -336,8 +352,8 @@ public class PaintPanel extends javax.swing.JPanel {
     private javax.swing.JToolBar.Separator jSeparator1;
     private javax.swing.JToolBar.Separator jSeparator2;
     private javax.swing.JToolBar.Separator jSeparator3;
+    private javax.swing.JToggleButton jToggleButton2;
     private javax.swing.JPanel panelDraw;
-    private javax.swing.JPanel panelToolbar;
     private javax.swing.JScrollPane scrollPane;
     private javax.swing.JToggleButton tglBtnDraw;
     private javax.swing.JToggleButton tglBtnDrawArrow;
@@ -347,7 +363,7 @@ public class PaintPanel extends javax.swing.JPanel {
     private javax.swing.JToggleButton tglBtnDrawRectangle;
     private javax.swing.JToggleButton tglBtnDrawText;
     private javax.swing.JToggleButton tglBtnSelect;
-    private javax.swing.JToolBar toolbar;
+    private javax.swing.JToolBar topToolbar;
     // End of variables declaration//GEN-END:variables
 
     /**
@@ -585,6 +601,46 @@ public class PaintPanel extends javax.swing.JPanel {
             this.setPreferredSize(newSize);
             this.revalidate();
             this.updatePanel();
+        }
+    }
+    
+    /**
+     * Check the button fill was selected or not
+     * @return
+     * true - if it was selected
+     * <br>
+     * false - in otherwise 
+     * 
+     */
+    public boolean isFilled() {
+        return filled;
+    }
+
+    /**
+     * Set Filled
+     * @param fill
+     * fill is true when this button selected and false in otherwise
+     */
+    public void setFilled(boolean filled) {
+        this.filled = filled;
+//        properties.setProperty("filled", "" + filled);
+        if (selectedObjects != null) {
+            for (Iterator iterator = selectedObjects.iterator(); iterator.hasNext();) {
+                AnnotationObject paintObject = (AnnotationObject) iterator.next();
+                if (paintObject instanceof AnnotationRectObject) {
+                    ((AnnotationRectObject) paintObject).setFilled(filled);
+                    continue;
+                }
+                if (paintObject instanceof AnnotationOvalObject) {
+                    ((AnnotationOvalObject) paintObject).setFilled(filled);
+                    continue;
+                }
+                if (paintObject instanceof AnnotationQuadArrowObject) {
+                    ((AnnotationQuadArrowObject) paintObject).setFilled(filled);
+                    continue;
+                }
+                this.updatePanel();
+            }
         }
     }
 }
