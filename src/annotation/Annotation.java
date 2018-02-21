@@ -1,10 +1,10 @@
 // >java -jar Annotation_webstart_edit.jar true true 123456789,cms http://192.168.0.14:9080/EDCWeb/ViewerUtilServlet annotationFileToolbar:///C:\images\1.jpg annotationFileToolbar:///C:\images\2.jpg annotationFileToolbar:///C:\anno01.ann [stamp]annotationFileToolbar:///C:\stamp_images\approved.gif [stamp]annotationFileToolbar:///C:\stamp_images\downlbtn.gif
 package annotation;
 
+import com.github.somprasongd.java.paint.components.LocationPanel;
 import java.net.MalformedURLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import annotation.util.JavaVersionCheck;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.WindowEvent;
@@ -81,13 +81,13 @@ public class Annotation extends JPanel implements WindowListener {
             annotationPaintPanel = new AnnotationPaintPanel();//temp_file.getPath(), str_usrID, str_hostURL, url_Images[0], url_Stamps);
             JScrollPane scrollPanel = new JScrollPane(annotationPaintPanel);
             annotationPaintPanel.setScroll(scrollPanel);
-            // navigator bar - no
-            AnnotationNavigatorBar annotationNavigatorBar = new AnnotationNavigatorBar(new URL[0]//url_Images
-                    , annotationPaintPanel);
-            annotationNavigatorBar.setFloatable(false);
-            // thumbnail bar - no
-            AnnotationThumbnailPanel annotationThumbnailPanel = new AnnotationThumbnailPanel(new URL[0] //url_Images
-                    , annotationPaintPanel, annotationNavigatorBar);
+//            // navigator bar - no
+//            AnnotationNavigatorBar annotationNavigatorBar = new AnnotationNavigatorBar(new URL[0]//url_Images
+//                    , annotationPaintPanel);
+//            annotationNavigatorBar.setFloatable(false);
+//            // thumbnail bar - no
+//            AnnotationThumbnailPanel annotationThumbnailPanel = new AnnotationThumbnailPanel(new URL[0] //url_Images
+//                    , annotationPaintPanel, annotationNavigatorBar);
             // tools bar 
             AnnotationToolsToolbar annotationToolsToolbar = new AnnotationToolsToolbar(annotationPaintPanel, str_hostURL, is_addAnn);
             annotationToolsToolbar.setFloatable(false);
@@ -104,7 +104,7 @@ public class Annotation extends JPanel implements WindowListener {
             annotationEditToolbar.setFloatable(false);
             
             //user_panel = new JImagePaintSelectUser(annotationPaintPanel);
-            AnnotationLocationPanel annotationLocationPanel = new AnnotationLocationPanel("");
+            LocationPanel annotationLocationPanel = new LocationPanel();
             annotationPaintPanel.setLocationPanel(annotationLocationPanel);
 
 // old
@@ -137,7 +137,7 @@ public class Annotation extends JPanel implements WindowListener {
 //                panel_south.add(panel_inSouth, BorderLayout.WEST);
                     panel_south.add(annotationToolsToolbar, BorderLayout.WEST);
             }
-            panel_south.add(annotationNavigatorBar, BorderLayout.CENTER);
+//            panel_south.add(annotationNavigatorBar, BorderLayout.CENTER);
             Label label_aoa = new Label("(c) Copyright 2008 Alpha Office Automation Co., Ltd");
             panel_south.add(label_aoa, BorderLayout.EAST);
 
@@ -145,7 +145,7 @@ public class Annotation extends JPanel implements WindowListener {
             this.add(panel_north, BorderLayout.NORTH);
             this.add(scrollPanel, BorderLayout.CENTER);
             this.add(panel_south, BorderLayout.SOUTH);
-            this.add(annotationThumbnailPanel, BorderLayout.EAST);
+//            this.add(annotationThumbnailPanel, BorderLayout.EAST);
         } catch (MalformedURLException ex) {
             Logger.getLogger(Annotation.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -303,12 +303,12 @@ public class Annotation extends JPanel implements WindowListener {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         }
         frame = new JFrame();
-        // Java vertion check
-        if (!JavaVersionCheck.checkMin(1.4)) {
-            JOptionPane.showMessageDialog(frame, "You do not seem to have a Java version 1.4 or later\nDownload an updated version from http://java.sun.com", "Java Version Check",
-                    JOptionPane.ERROR_MESSAGE);
-            System.exit(-1);
-        }
+//        // Java vertion check
+//        if (!JavaVersionCheck.checkMin(1.4)) {
+//            JOptionPane.showMessageDialog(frame, "You do not seem to have a Java version 1.4 or later\nDownload an updated version from http://java.sun.com", "Java Version Check",
+//                    JOptionPane.ERROR_MESSAGE);
+//            System.exit(-1);
+//        }
         Annotation contents = null;
         if (args.length > 0) {
             contents = new Annotation(args);

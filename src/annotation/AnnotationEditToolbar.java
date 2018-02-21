@@ -19,9 +19,9 @@ import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-import annotation.util.ColorButton;
-import annotation.util.Language;
-import annotation.util.StrokeChooserPanel;
+import com.github.somprasongd.java.paint.utils.ColorButton;
+import com.github.somprasongd.java.paint.utils.Language;
+import com.github.somprasongd.java.paint.utils.StrokeChooserPanel;
 import javax.swing.plaf.DimensionUIResource;
 
 /**

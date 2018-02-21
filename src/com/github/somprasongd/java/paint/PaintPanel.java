@@ -5,12 +5,11 @@
  */
 package com.github.somprasongd.java.paint;
 
-import annotation.AnnotationLocationPanel;
-import annotation.AnnotationObject;
-import annotation.AnnotationOvalObject;
-import annotation.AnnotationQuadArrowObject;
-import annotation.AnnotationRectObject;
-import annotation.util.BufferedImageTool;
+import com.github.somprasongd.java.paint.objects.AnnotationObject;
+import com.github.somprasongd.java.paint.objects.AnnotationOvalObject;
+import com.github.somprasongd.java.paint.objects.AnnotationQuadArrowObject;
+import com.github.somprasongd.java.paint.objects.AnnotationRectObject;
+import com.github.somprasongd.java.paint.utils.BufferedImageTool;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.MediaTracker;
@@ -21,7 +20,6 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Vector;
 import javax.imageio.ImageIO;
 import javax.swing.JFileChooser;
 
@@ -45,7 +43,6 @@ public class PaintPanel extends javax.swing.JPanel {
     public static final int MODE_COLORPICK = 10;
     public static final int MODE_NOTE = 11;
     public static final int MODE_NONE = 100;
-    private AnnotationLocationPanel locationPanel;
     private List selectedObjects;
     private int currentMode;
     private JFileChooser saveChooser;
@@ -75,6 +72,7 @@ public class PaintPanel extends javax.swing.JPanel {
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
+        java.awt.GridBagConstraints gridBagConstraints;
 
         buttonGroupAction = new javax.swing.ButtonGroup();
         topToolbar = new javax.swing.JToolBar();
@@ -94,10 +92,12 @@ public class PaintPanel extends javax.swing.JPanel {
         btnSave = new javax.swing.JButton();
         panelDraw = new javax.swing.JPanel();
         scrollPane = new javax.swing.JScrollPane();
+        jPanel1 = new javax.swing.JPanel();
         bottomToolbar = new javax.swing.JToolBar();
         btnZoomReset = new javax.swing.JButton();
         btnZoomOut = new javax.swing.JButton();
         btnZoomIn = new javax.swing.JButton();
+        locationPanel = new com.github.somprasongd.java.paint.components.LocationPanel();
 
         setLayout(new java.awt.BorderLayout());
 
@@ -247,6 +247,8 @@ public class PaintPanel extends javax.swing.JPanel {
 
         add(panelDraw, java.awt.BorderLayout.CENTER);
 
+        jPanel1.setLayout(new java.awt.GridBagLayout());
+
         bottomToolbar.setFloatable(false);
         bottomToolbar.setRollover(true);
 
@@ -286,7 +288,20 @@ public class PaintPanel extends javax.swing.JPanel {
         });
         bottomToolbar.add(btnZoomIn);
 
-        add(bottomToolbar, java.awt.BorderLayout.SOUTH);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
+        jPanel1.add(bottomToolbar, gridBagConstraints);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.VERTICAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_END;
+        gridBagConstraints.weightx = 1.0;
+        jPanel1.add(locationPanel, gridBagConstraints);
+
+        add(jPanel1, java.awt.BorderLayout.SOUTH);
     }// </editor-fold>//GEN-END:initComponents
 
     private void tglBtnSelectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tglBtnSelectActionPerformed
@@ -349,10 +364,12 @@ public class PaintPanel extends javax.swing.JPanel {
     private javax.swing.JButton btnZoomOut;
     private javax.swing.JButton btnZoomReset;
     private javax.swing.ButtonGroup buttonGroupAction;
+    private javax.swing.JPanel jPanel1;
     private javax.swing.JToolBar.Separator jSeparator1;
     private javax.swing.JToolBar.Separator jSeparator2;
     private javax.swing.JToolBar.Separator jSeparator3;
     private javax.swing.JToggleButton jToggleButton2;
+    private com.github.somprasongd.java.paint.components.LocationPanel locationPanel;
     private javax.swing.JPanel panelDraw;
     private javax.swing.JScrollPane scrollPane;
     private javax.swing.JToggleButton tglBtnDraw;

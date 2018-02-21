@@ -5,6 +5,8 @@
  */
 package annotation;
 
+import com.github.somprasongd.java.paint.objects.AnnotationObject;
+import com.github.somprasongd.java.paint.objects.AnnotationStampObject;
 import java.awt.BasicStroke;
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -44,8 +46,8 @@ import javax.swing.JList;
 import javax.swing.ListCellRenderer;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
-import annotation.util.ColorButton;
-import annotation.util.StrokeChooserPanel;
+import com.github.somprasongd.java.paint.utils.ColorButton;
+import com.github.somprasongd.java.paint.utils.StrokeChooserPanel;
 
 /**
  *

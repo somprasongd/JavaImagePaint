@@ -6,6 +6,7 @@
 
 package annotation;
 
+import com.github.somprasongd.java.paint.objects.AnnotationNoteObject;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Font;
@@ -18,8 +19,8 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
-import annotation.util.ColorButton;
-import annotation.util.StrokeChooserPanel;
+import com.github.somprasongd.java.paint.utils.ColorButton;
+import com.github.somprasongd.java.paint.utils.StrokeChooserPanel;
 
 
 

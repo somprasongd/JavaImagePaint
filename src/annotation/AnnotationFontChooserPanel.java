@@ -3,7 +3,7 @@ package annotation;
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-import annotation.util.Language;
+import com.github.somprasongd.java.paint.utils.Language;
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;

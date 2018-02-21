@@ -1,8 +1,18 @@
 package annotation;
 
-import annotation.util.BufferedImageTool;
-import annotation.util.ImageIOFileFilter;
-import annotation.util.TransferableImage;
+import com.github.somprasongd.java.paint.components.LocationPanel;
+import com.github.somprasongd.java.paint.objects.AnnotationObject;
+import com.github.somprasongd.java.paint.objects.AnnotationTextObject;
+import com.github.somprasongd.java.paint.objects.AnnotationStampImageObject;
+import com.github.somprasongd.java.paint.objects.AnnotationRectObject;
+import com.github.somprasongd.java.paint.objects.AnnotationQuadArrowObject;
+import com.github.somprasongd.java.paint.objects.AnnotationOvalObject;
+import com.github.somprasongd.java.paint.objects.AnnotationStampObject;
+import com.github.somprasongd.java.paint.objects.AnnotationLineObject;
+import com.github.somprasongd.java.paint.objects.AnnotationNoteObject;
+import com.github.somprasongd.java.paint.utils.BufferedImageTool;
+import com.github.somprasongd.java.paint.utils.ImageIOFileFilter;
+import com.github.somprasongd.java.paint.utils.TransferableImage;
 import javax.imageio.ImageIO;
 import javax.imageio.ImageWriter;
 import javax.imageio.stream.FileImageOutputStream;
@@ -71,7 +81,7 @@ public class AnnotationPaintPanel extends JPanel implements MouseListener, Mouse
     private ArrayList tempObjects;
     private ArrayList displayObjects;
     private JScrollPane scroll;
-    private AnnotationLocationPanel locationPanel;
+    private LocationPanel locationPanel;
     private JFileChooser saveChooser;
     private Point mousePoint;
     private Point dragDown;
@@ -86,7 +96,7 @@ public class AnnotationPaintPanel extends JPanel implements MouseListener, Mouse
     private int new_width;
     private int new_height;
     //private URL url_anno;
-    private  File temp_file;//= new File(System.getProperty("user.home") + "\\ann_temp.ann");
+    private File temp_file;//= new File(System.getProperty("user.home") + "\\ann_temp.ann");
     private Vector temp_anno;
     private String view_user = "alluser>";
     private String edit_user = "alluser>";
@@ -124,7 +134,7 @@ public class AnnotationPaintPanel extends JPanel implements MouseListener, Mouse
         this.selectedObjects = new ArrayList();
         this.displayObjects = new ArrayList();
         this.loadProperties();
-        
+
         String width = properties.getProperty("width");
         if (width == null) {
             width = "300";
@@ -228,8 +238,8 @@ public class AnnotationPaintPanel extends JPanel implements MouseListener, Mouse
 
     /**
      * Set url_anno name of current image
-     * @param filename
-     * filename is url_anno name of current image on the screen
+     *
+     * @param filename filename is url_anno name of current image on the screen
      */
     private void setCurrentImageFilename(String filename) {
         int index = filename.lastIndexOf("/");
@@ -238,18 +248,18 @@ public class AnnotationPaintPanel extends JPanel implements MouseListener, Mouse
     }
 
     /**
-     * 
-     * @return
-     * current url_anno name of the current image that show on the screen
+     *
+     * @return current url_anno name of the current image that show on the
+     * screen
      */
     public String getCurrentImageFilename() {
         return currentImage_filename;
     }
 
     /**
-     *  Add a stamp object on the screen
-     * @param obj
-     *  is a stamp object
+     * Add a stamp object on the screen
+     *
+     * @param obj is a stamp object
      */
     public void addStampObjects(AnnotationStampObject obj) {
         //tempObjects.add(obj);
@@ -262,8 +272,8 @@ public class AnnotationPaintPanel extends JPanel implements MouseListener, Mouse
 
     /**
      * Add stamp image object into the screen
-     * @param url_anno
-     * is iamge url_anno
+     *
+     * @param url_anno is iamge url_anno
      */
     public void addStampImage(URL url) {
         BufferedImage image = loadStampImage(url);
@@ -281,6 +291,7 @@ public class AnnotationPaintPanel extends JPanel implements MouseListener, Mouse
 
     /**
      * Load an image url_anno and returns it as a BufferedImage.
+     *
      * @param image_url
      * @return
      */
@@ -298,7 +309,8 @@ public class AnnotationPaintPanel extends JPanel implements MouseListener, Mouse
     }
 
     /**
-     * Load stamp image 
+     * Load stamp image
+     *
      * @param clickPoint
      * @param image_Path
      */
@@ -323,32 +335,6 @@ public class AnnotationPaintPanel extends JPanel implements MouseListener, Mouse
     }
 
     /**
-     * Open stamp diaolg
-     */
-    public void OpenStampDialog() {
-        new AnnotationStampDialog(this, view_user, edit_user, del_user, str_userid + ">", str_stampURL);
-    }
-
-    /**
-     * Open select user diaolg
-     */
-    public void OpenSelectUserDialog(String host) {
-        for (Iterator iterator = selectedObjects.iterator(); iterator.hasNext();) {
-            AnnotationObject paintObject = (AnnotationObject) iterator.next();
-            String owner_users = paintObject.getOwnerUser();
-            Vector view_users = paintObject.getView_user();
-            Vector edit_users = paintObject.getEdit_user();
-            Vector del_users = paintObject.getDel_user();
-            if (owner_users.equals(str_userid + ">")) {
-                new AnnotationSelectUserDialog(this, host, str_userid, view_users, edit_users, del_users);
-            } else {
-                JOptionPane.showMessageDialog(null, "คุณมีไม่สิทธิ์ในการกำหนดสิทธิ์ผู้ใช้ให้กับ Annotaion นี้", "คำเตือน!", JOptionPane.INFORMATION_MESSAGE);
-            }
-        }
-        this.setCurrentMode(AnnotationPaintPanel.MODE_NONE);
-    }
-
-    /**
      * Add note object to the screen
      */
     public void addNoteObjects(AnnotationNoteObject note) {
@@ -370,23 +356,24 @@ public class AnnotationPaintPanel extends JPanel implements MouseListener, Mouse
 
     /**
      * Get lacation panel
+     *
      * @return
      */
-    public AnnotationLocationPanel getLocationPanel() {
+    public LocationPanel getLocationPanel() {
         return locationPanel;
     }
 
     /**
      * Set location panel
      */
-    public void setLocationPanel(AnnotationLocationPanel panel) {
+    public void setLocationPanel(LocationPanel panel) {
         this.locationPanel = panel;
     }
 
     /**
      * Get background color
-     * @return
-     * backgraound color
+     *
+     * @return backgraound color
      */
     public Color getBgColor() {
         return bgColor;
@@ -394,8 +381,8 @@ public class AnnotationPaintPanel extends JPanel implements MouseListener, Mouse
 
     /**
      * Set background color
-     * @param bgColor
-     * background color
+     *
+     * @param bgColor background color
      */
     public void setBgColor(Color bgColor) {
         this.bgColor = bgColor;
@@ -404,8 +391,8 @@ public class AnnotationPaintPanel extends JPanel implements MouseListener, Mouse
 
     /**
      * Get an alphas
-     * @return
-     * alpha
+     *
+     * @return alpha
      */
     public float getAlpha() {
         return alpha;
@@ -413,6 +400,7 @@ public class AnnotationPaintPanel extends JPanel implements MouseListener, Mouse
 
     /**
      * Set an alpha
+     *
      * @param alpha
      */
     public void setAlpha(float alpha) {
@@ -441,6 +429,7 @@ public class AnnotationPaintPanel extends JPanel implements MouseListener, Mouse
 
     /**
      * Get stroke
+     *
      * @return
      */
     public Stroke getStroke() {
@@ -449,6 +438,7 @@ public class AnnotationPaintPanel extends JPanel implements MouseListener, Mouse
 
     /**
      * set stroke
+     *
      * @param stroke
      */
     public void setStroke(Stroke stroke) {
@@ -521,8 +511,9 @@ public class AnnotationPaintPanel extends JPanel implements MouseListener, Mouse
 
     /**
      * Set font
+     *
      * @param font
-     * 
+     *
      */
     @Override
     public void setFont(Font font) {
@@ -558,8 +549,8 @@ public class AnnotationPaintPanel extends JPanel implements MouseListener, Mouse
 
     /**
      * Get current mode
-     * @return
-     * current mode
+     *
+     * @return current mode
      */
     public int getCurrentMode() {
         return currentMode;
@@ -567,8 +558,8 @@ public class AnnotationPaintPanel extends JPanel implements MouseListener, Mouse
 
     /**
      * Set current mode
-     * @param currentmode
-     * number of current mode
+     *
+     * @param currentmode number of current mode
      */
     public void setCurrentMode(int currentmode) {
         oldMode = currentMode;
@@ -576,14 +567,14 @@ public class AnnotationPaintPanel extends JPanel implements MouseListener, Mouse
         this.firePropertyChange("mode", new Integer(oldMode), new Integer(currentMode));
 
         selectedObjects = new ArrayList();
-        if (currentMode == AnnotationPaintPanel.MODE_LINE ||
-                currentMode == AnnotationPaintPanel.MODE_OVAL ||
-                currentMode == AnnotationPaintPanel.MODE_RECT) {
+        if (currentMode == AnnotationPaintPanel.MODE_LINE
+                || currentMode == AnnotationPaintPanel.MODE_OVAL
+                || currentMode == AnnotationPaintPanel.MODE_RECT) {
             this.setCursor(new Cursor(Cursor.CROSSHAIR_CURSOR));
         } else if (currentMode == AnnotationPaintPanel.MODE_TEXT || currentMode == AnnotationPaintPanel.MODE_NOTE) {
             this.setCursor(new Cursor(Cursor.TEXT_CURSOR));
-        } else if (currentMode == AnnotationPaintPanel.MODE_SELECT ||
-                currentMode == AnnotationPaintPanel.MODE_QUADARROW) {
+        } else if (currentMode == AnnotationPaintPanel.MODE_SELECT
+                || currentMode == AnnotationPaintPanel.MODE_QUADARROW) {
             this.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
         } else {
             this.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
@@ -594,6 +585,7 @@ public class AnnotationPaintPanel extends JPanel implements MouseListener, Mouse
 
     /**
      * Get scroll
+     *
      * @return
      */
     public JScrollPane getScroll() {
@@ -602,6 +594,7 @@ public class AnnotationPaintPanel extends JPanel implements MouseListener, Mouse
 
     /**
      * Set score
+     *
      * @param scroll
      */
     public void setScroll(JScrollPane scroll) {
@@ -612,10 +605,10 @@ public class AnnotationPaintPanel extends JPanel implements MouseListener, Mouse
 
     /**
      * Check is antialiase or not
-     * @return
-     * true - if it was selected
+     *
+     * @return true - if it was selected
      * <br>
-     * false - in otherwise 
+     * false - in otherwise
      */
     public boolean isAntialiased() {
         return antialiased;
@@ -623,8 +616,9 @@ public class AnnotationPaintPanel extends JPanel implements MouseListener, Mouse
 
     /**
      * Set antialiase
-     * @param antialiase
-     * antialiase is true when this button selected and false in otherwise
+     *
+     * @param antialiase antialiase is true when this button selected and false
+     * in otherwise
      */
     public void setAntialiased(boolean antialiased) {
         this.antialiased = antialiased;
@@ -650,11 +644,11 @@ public class AnnotationPaintPanel extends JPanel implements MouseListener, Mouse
 
     /**
      * Check the button fill was selected or not
-     * @return
-     * true - if it was selected
+     *
+     * @return true - if it was selected
      * <br>
-     * false - in otherwise 
-     * 
+     * false - in otherwise
+     *
      */
     public boolean isFilled() {
         return filled;
@@ -662,8 +656,8 @@ public class AnnotationPaintPanel extends JPanel implements MouseListener, Mouse
 
     /**
      * Set Filled
-     * @param fill
-     * fill is true when this button selected and false in otherwise
+     *
+     * @param fill fill is true when this button selected and false in otherwise
      */
     public void setFilled(boolean filled) {
         this.filled = filled;
@@ -721,8 +715,9 @@ public class AnnotationPaintPanel extends JPanel implements MouseListener, Mouse
 
     /**
      * Get color of the rectangle, oval, line or arrow objects
+     *
      * @return
-     * 
+     *
      */
     public Color getDrawColor() {
         return drawColor;
@@ -730,6 +725,7 @@ public class AnnotationPaintPanel extends JPanel implements MouseListener, Mouse
 
     /**
      * Set color of the rectangle, oval, line or arrow objects
+     *
      * @param drawColor
      */
     public void setDrawColor(Color drawColor) {
@@ -756,6 +752,7 @@ public class AnnotationPaintPanel extends JPanel implements MouseListener, Mouse
 
     /**
      * Get text's color
+     *
      * @return
      */
     public Color getTextColor() {
@@ -764,6 +761,7 @@ public class AnnotationPaintPanel extends JPanel implements MouseListener, Mouse
 
     /**
      * Set text's color
+     *
      * @param textColor
      */
     public void setTextColor(Color textColor) {
@@ -834,6 +832,7 @@ public class AnnotationPaintPanel extends JPanel implements MouseListener, Mouse
 
     /**
      * Get paint objects
+     *
      * @return
      */
     public ArrayList getPaintObjects() {
@@ -842,6 +841,7 @@ public class AnnotationPaintPanel extends JPanel implements MouseListener, Mouse
 
     /**
      * Get object image
+     *
      * @param list
      * @return
      */
@@ -856,9 +856,9 @@ public class AnnotationPaintPanel extends JPanel implements MouseListener, Mouse
     }
 
     /**
-     * Set number of zoom at a time  
-     * @param zoom
-     * number of zoom that zoomed at a time 
+     * Set number of zoom at a time
+     *
+     * @param zoom number of zoom that zoomed at a time
      */
     public void setZoom(double zoom) {
         this.zoom = zoom;
@@ -872,6 +872,7 @@ public class AnnotationPaintPanel extends JPanel implements MouseListener, Mouse
 
     /**
      * Get zoom
+     *
      * @return
      */
     public double getZoom() {
@@ -879,9 +880,8 @@ public class AnnotationPaintPanel extends JPanel implements MouseListener, Mouse
     }
 
     /**
-     * 
-     * @param center
-     * center point of zoomed
+     *
+     * @param center center point of zoomed
      */
     public void zoomed(Point center) {
         Dimension newSize = new Dimension((int) (img.getWidth() * zoom), (int) (img.getHeight() * zoom));
@@ -938,8 +938,8 @@ public class AnnotationPaintPanel extends JPanel implements MouseListener, Mouse
 
     /**
      * rotate d degrees at a time
-     * @param d
-     * number of degrees that rotated at a time
+     *
+     * @param d number of degrees that rotated at a time
      */
     public void rotate(double d) {
         currentAngle += d;
@@ -980,14 +980,13 @@ public class AnnotationPaintPanel extends JPanel implements MouseListener, Mouse
     }
 
     /**
-     * 
+     *
      * @param g
      */
     @Override
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
         Graphics2D g2 = (Graphics2D) g;
-
 
         AffineTransform origXform = g2.getTransform();
         AffineTransform newXform = (AffineTransform) (origXform.clone());
@@ -1030,7 +1029,6 @@ public class AnnotationPaintPanel extends JPanel implements MouseListener, Mouse
         g2.fillRect(0, 0, img.getWidth(), img.getHeight());
 
         //unzoomded bits
-
         g2.drawImage(img, 0, 0, null);
         //g2.setTransform(origXform);
 
@@ -1100,8 +1098,8 @@ public class AnnotationPaintPanel extends JPanel implements MouseListener, Mouse
 
     /**
      * load image to show on the screen that call by JImageThumbnailPanel
-     * @param url_anno
-     * url_anno object is a url_anno of an image
+     *
+     * @param url_anno url_anno object is a url_anno of an image
      */
     public void loadNewImage(URL url) {
         if (url != null) {
@@ -1138,6 +1136,7 @@ public class AnnotationPaintPanel extends JPanel implements MouseListener, Mouse
 
     /**
      * Save an iamge and all annotion together
+     *
      * @return
      */
     public boolean saveImageFile() {
@@ -1229,7 +1228,8 @@ public class AnnotationPaintPanel extends JPanel implements MouseListener, Mouse
     }
 
     /**
-     * Load annotaion url_anno 
+     * Load annotaion url_anno
+     *
      * @param url_anno
      */
     private void loadAnnotationFile(File file) {
@@ -1392,7 +1392,6 @@ public class AnnotationPaintPanel extends JPanel implements MouseListener, Mouse
                         System.out.println("this user can not see this annotation: " + arrStr[5]);
                     }
 
-
                 }
                 for (Iterator iterator = toCopy.iterator(); iterator.hasNext();) {
                     AnnotationObject object = (AnnotationObject) iterator.next();
@@ -1434,9 +1433,9 @@ public class AnnotationPaintPanel extends JPanel implements MouseListener, Mouse
             }
         }
 
-
         return false;
     }
+
     /*
     private void loadAnnotationFile2(URL url_anno) {
     URLConnection conn = null;
@@ -1589,6 +1588,7 @@ public class AnnotationPaintPanel extends JPanel implements MouseListener, Mouse
 
     /**
      * Save all annotation on the screen into temp url
+     *
      * @param url_anno
      */
     public void autoSaveAnnotaion() {
@@ -1846,7 +1846,6 @@ public class AnnotationPaintPanel extends JPanel implements MouseListener, Mouse
 
             }
 
-
         } else if (currentMode == AnnotationPaintPanel.MODE_COLORPICK) {
             Color color = new Color(img.getRGB((int) (e.getPoint().x / zoom), (int) (e.getPoint().y / zoom)));
 
@@ -1934,7 +1933,6 @@ public class AnnotationPaintPanel extends JPanel implements MouseListener, Mouse
 
                 }
 
-
             } else if (currentMode == AnnotationPaintPanel.MODE_ERASE) {
                 Point loc = new Point((int) (e.getPoint().x / zoom), (int) (e.getPoint().y / zoom));
                 int startX = loc.x - (eraseRad - 1) / 2;
@@ -2008,7 +2006,6 @@ public class AnnotationPaintPanel extends JPanel implements MouseListener, Mouse
         }
         dragDown = null;
 
-
         for (Iterator iterator = tempObjects.iterator(); iterator.hasNext();) {
             AnnotationObject tempObject = (AnnotationObject) iterator.next();
 
@@ -2035,7 +2032,6 @@ public class AnnotationPaintPanel extends JPanel implements MouseListener, Mouse
             }
             for (Iterator iterator = toDelete.iterator(); iterator.hasNext();) {
                 AnnotationObject object = (AnnotationObject) iterator.next();
-
 
                 if (object instanceof AnnotationNoteObject) {
                     AnnotationNoteObject notes = (AnnotationNoteObject) object;
@@ -2132,7 +2128,6 @@ public class AnnotationPaintPanel extends JPanel implements MouseListener, Mouse
                     newY = yMax;
                 }
                 scroll.getViewport().setViewPosition(new Point(newX, newY));
-
 
             }
 
@@ -2290,9 +2285,9 @@ public class AnnotationPaintPanel extends JPanel implements MouseListener, Mouse
             this.setZoom(this.getZoom() + 0.25);
         }
         this.zoomed(e.getPoint());
-    //}
+        //}
     }
-    
+
     public void loadProperties() {
 //        File file = new File("jimgpnt.properties");
 //        if (file.exists()) {
@@ -2303,22 +2298,22 @@ public class AnnotationPaintPanel extends JPanel implements MouseListener, Mouse
 //                e.printStackTrace();
 //            }
 //        } else {
-            properties = new Properties();
-            properties.setProperty("width", "600");
-            properties.setProperty("height", "420");
-            properties.setProperty("bgcolor", "" + new Color(236, 233, 216).getRGB());
-            properties.setProperty("drawcolor", "" + Color.black.getRGB());
-            properties.setProperty("textcolor", "" + Color.black.getRGB());
-            properties.setProperty("alpha", "1.0");
-            properties.setProperty("fontname", "Serif");
-            properties.setProperty("fonttype", "1");
-            properties.setProperty("fontsize", "22");
-            properties.setProperty("filled", "false");
-            properties.setProperty("antialiased", "true");
-            properties.setProperty("arcwidth", "0.0");
-            properties.setProperty("archeight", "0.0");
-            properties.setProperty("strokewidth", "1.0");
-            properties.setProperty("eraserad", "3");
+        properties = new Properties();
+        properties.setProperty("width", "600");
+        properties.setProperty("height", "420");
+        properties.setProperty("bgcolor", "" + new Color(236, 233, 216).getRGB());
+        properties.setProperty("drawcolor", "" + Color.black.getRGB());
+        properties.setProperty("textcolor", "" + Color.black.getRGB());
+        properties.setProperty("alpha", "1.0");
+        properties.setProperty("fontname", "Serif");
+        properties.setProperty("fonttype", "1");
+        properties.setProperty("fontsize", "22");
+        properties.setProperty("filled", "false");
+        properties.setProperty("antialiased", "true");
+        properties.setProperty("arcwidth", "0.0");
+        properties.setProperty("archeight", "0.0");
+        properties.setProperty("strokewidth", "1.0");
+        properties.setProperty("eraserad", "3");
 //        }
     }
 

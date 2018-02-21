@@ -1,6 +1,6 @@
 package annotation;
 
-import annotation.util.Language;
+import com.github.somprasongd.java.paint.utils.Language;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -21,18 +21,10 @@ public class AnnotationToolsToolbar extends JToolBar implements PropertyChangeLi
     private JToggleButton note;
     private JToggleButton text;
     private JToggleButton arrow;
-    private JButton stamp;
-    private JButton private_user;
-    private JCheckBox public_user;
-    private JLabel label;
-    private String host;
-    private boolean can_add;
     private JButton saveAnno;
 
     public AnnotationToolsToolbar(AnnotationPaintPanel paintPanel, String host, boolean can_add) {
         this.paintPanel = paintPanel;
-        this.host = host;
-        this.can_add = can_add;
         initModeButtons();
     }
 
@@ -52,7 +44,7 @@ public class AnnotationToolsToolbar extends JToolBar implements PropertyChangeLi
         line.setActionCommand("line");
         line.addActionListener(this);
         //line.setSelected(false);
-        line.setEnabled(can_add);
+//        line.setEnabled(can_add);
         this.add(line);
 
         icon = new ImageIcon(this.getClass().getResource(Icon.icon_draw_ractangle));
@@ -60,7 +52,7 @@ public class AnnotationToolsToolbar extends JToolBar implements PropertyChangeLi
         rect.setToolTipText(Language.getStr_rectangle());
         rect.setActionCommand("rect");
         rect.addActionListener(this);
-        rect.setEnabled(can_add);
+//        rect.setEnabled(can_add);
         this.add(rect);
 
         icon = new ImageIcon(this.getClass().getResource(Icon.icon_draw_oval));
@@ -68,7 +60,7 @@ public class AnnotationToolsToolbar extends JToolBar implements PropertyChangeLi
         oval.setToolTipText(Language.getStr_oval());
         oval.setActionCommand("oval");
         oval.addActionListener(this);
-        oval.setEnabled(can_add);
+//        oval.setEnabled(can_add);
         this.add(oval);
 
         icon = new ImageIcon(this.getClass().getResource(Icon.icon_draw_arrow));
@@ -76,7 +68,7 @@ public class AnnotationToolsToolbar extends JToolBar implements PropertyChangeLi
         arrow.setToolTipText(Language.getStr_arrow());
         arrow.setActionCommand("arrow");
         arrow.addActionListener(this);
-        arrow.setEnabled(can_add);
+//        arrow.setEnabled(can_add);
         this.add(arrow);
         
         icon = new ImageIcon(this.getClass().getResource(Icon.icon_draw_text));
@@ -84,7 +76,7 @@ public class AnnotationToolsToolbar extends JToolBar implements PropertyChangeLi
         text.setToolTipText(Language.getStr_text());
         text.setActionCommand("text");
         text.addActionListener(this);
-        text.setEnabled(can_add);
+//        text.setEnabled(can_add);
         this.add(text);
 
         icon = new ImageIcon(this.getClass().getResource(Icon.icon_draw_note));
@@ -92,26 +84,8 @@ public class AnnotationToolsToolbar extends JToolBar implements PropertyChangeLi
         note.setToolTipText(Language.getStr_note());
         note.setActionCommand("note");
         note.addActionListener(this);
-        note.setEnabled(can_add);
+//        note.setEnabled(can_add);
         this.add(note);
-
-        icon = new ImageIcon(this.getClass().getResource(Icon.icon_draw_stamp));
-        stamp = new JButton(icon);
-        stamp.setToolTipText(Language.getStr_stamp());
-        stamp.setActionCommand("stamp");
-        stamp.addActionListener(this);
-        stamp.setEnabled(can_add);
-        this.add(stamp);
-
-        this.addSeparator();
-
-        icon = new ImageIcon(this.getClass().getResource(Icon.icon_user_add));
-        private_user = new JButton(icon);
-        private_user.setToolTipText(Language.getStr_userPermission());
-        private_user.setEnabled(false);
-        private_user.setActionCommand("user");
-        private_user.addActionListener(this);
-        this.add(private_user);
 
         this.addSeparator();
 
@@ -119,7 +93,7 @@ public class AnnotationToolsToolbar extends JToolBar implements PropertyChangeLi
         saveAnno = new JButton(icon);
         saveAnno.setActionCommand("saveAnno");
         saveAnno.setToolTipText(Language.getStr_save());
-        saveAnno.setEnabled(can_add);
+//        saveAnno.setEnabled(can_add);
         saveAnno.addActionListener(this);
         this.add(saveAnno);
 
@@ -164,22 +138,13 @@ public class AnnotationToolsToolbar extends JToolBar implements PropertyChangeLi
     }
 
     public void actionPerformed(ActionEvent e) {
-//        label.setEnabled(false);
-//        public_user.setEnabled(false);
-//        public_user.setSelected(false);
-        private_user.setEnabled(false);
+
 
         if (e.getActionCommand().equals("select")) {
             paintPanel.setCurrentMode(AnnotationPaintPanel.MODE_SELECT);
-            if (can_add) {
-//                label.setEnabled(true);
-//                public_user.setEnabled(true);
-//                public_user.setSelected(false);
-                private_user.setEnabled(true);
-            }
-        }
-        if (e.getActionCommand().equals("user")) {
-            paintPanel.OpenSelectUserDialog(host);
+//            if (can_add) {
+//                private_user.setEnabled(true);
+//            }
         }
         if (e.getActionCommand().equals("line")) {
             paintPanel.setCurrentMode(AnnotationPaintPanel.MODE_LINE);
@@ -198,10 +163,7 @@ public class AnnotationToolsToolbar extends JToolBar implements PropertyChangeLi
         }
         if (e.getActionCommand().equals("arrow")) {
             paintPanel.setCurrentMode(AnnotationPaintPanel.MODE_QUADARROW);
-        }
-        if (e.getActionCommand().equals("stamp")) {
-            paintPanel.OpenStampDialog();
-        }
+        }        
         if (e.getActionCommand().equals("saveAnno")) {
             paintPanel.saveAllAnnotation();
         }
