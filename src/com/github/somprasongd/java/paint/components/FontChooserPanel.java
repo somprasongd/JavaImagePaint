@@ -5,6 +5,7 @@
  */
 package com.github.somprasongd.java.paint.components;
 
+import java.awt.Color;
 import java.awt.Font;
 import java.awt.GraphicsEnvironment;
 import java.beans.PropertyChangeListener;
@@ -24,13 +25,7 @@ public class FontChooserPanel extends javax.swing.JPanel {
     public FontChooserPanel() {
         initComponents();
 
-        String font = this.getFont().getFontName();
-        String fontName = font;
-        if (font.indexOf(".") > -1) {
-            fontName = font.substring(0, font.indexOf("."));
-        }
-
-        combFontName.setSelectedItem(fontName);
+        reset();
     }
 
     /**
@@ -152,8 +147,7 @@ public class FontChooserPanel extends javax.swing.JPanel {
     private javax.swing.JToggleButton tglItalic;
     // End of variables declaration//GEN-END:variables
 
-    private void updateFont() {
-        Font oldF = this.getFont();
+    public Font getSelectedFont() {
         int b = Font.PLAIN;
         if (tglBold.isSelected()) {
             b = Font.BOLD;
@@ -162,10 +156,15 @@ public class FontChooserPanel extends javax.swing.JPanel {
         if (tglItalic.isSelected()) {
             i = Font.ITALIC;
         }
-        Font newF = new Font(combFontName.getSelectedItem().toString(),
+        return new Font(combFontName.getSelectedItem().toString(),
                 b | i,
                 ((Double) spinnerFontSize.getModel().getValue()).intValue());
-        this.firePropertyChange(propName, oldF, newF);
+    }
+    
+    private void updateFont() {
+        Font oldF = this.getFont();
+        
+        this.firePropertyChange(propName, oldF, getSelectedFont());
     }
 
     public String getPropName() {
@@ -179,12 +178,26 @@ public class FontChooserPanel extends javax.swing.JPanel {
     public void setPropName(String propName) {
         this.propName = propName;
     }
+    
+    public void reset() {
+        btnColor.setColor(Color.BLACK);
+        String font = this.getFont().getFontName();
+        String fontName = font;
+        if (font.contains(".")) {
+            fontName = font.substring(0, font.indexOf("."));
+        }
+
+        combFontName.setSelectedItem(fontName);
+        spinnerFontSize.setValue(14.0d);
+        tglBold.setSelected(false);
+        tglItalic.setSelected(false);
+    }
 
     public void setSelectedFont(Font font) {
         if (font != null) {
             tglBold.setSelected(font.isBold());
             tglItalic.setSelected(font.isItalic());
-            spinnerFontSize.setValue(new Integer(font.getSize()));
+            spinnerFontSize.setValue(font.getSize());
             String fontName = font.getFontName().substring(0, font.getFontName().indexOf("."));
             combFontName.setSelectedItem(fontName);
         }
@@ -192,5 +205,13 @@ public class FontChooserPanel extends javax.swing.JPanel {
     
     public void addPropertyChangeListenerColorChooser(PropertyChangeListener pcl){
         btnColor.addPropertyChangeListener(pcl);
+    }
+
+    public Color getFontColor() {
+        return btnColor.getColor();
+    }
+
+    public void setFontColor(Color fontColor) {
+        btnColor.setColor(fontColor);
     }
 }

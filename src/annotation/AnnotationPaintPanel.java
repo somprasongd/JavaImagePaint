@@ -1004,119 +1004,114 @@ public class AnnotationPaintPanel extends JPanel implements MouseListener, Mouse
                     // ใส่สตริงชุดแรกที่ระบบรายชื่อ user ไว้ แล้วเอาไป chk กับ str_userid ที่รับมาว่าตรงกันมั้ย
                     String view_users = arrStr[0];
                     // ให้เรียกใช้อีก fn ในการตรวจแล้ว return boolean กลับมา
-                    boolean can_see = chk_user(view_users);
-                    if (can_see) {
-                        String edit_users = arrStr[1];
-                        String del_users = arrStr[2];
-                        String owner_user = arrStr[3];
-                        System.out.println("this user can see this annotation: " + arrStr[5]);
-                        String chkfilename = arrStr[4];
-                        String nameObj = arrStr[5];
-                        String image_path = "";
-                        double xStart = 0;
-                        double yEnd = 0;
-                        double xEnd = 0;
-                        double yStart = 0;
-                        double xCtrl = 0;
-                        double yCtrl = 0;
-                        double arcWidths = 0;
-                        double arcHeights = 0;
-                        double headMult = 0;
-                        double endWidth = 0;
-                        double tipWidth = 0;
-                        double startWidth = 0;
-                        double strokeWidth = 0;
-                        double width;
-                        double hieght;
-                        Color color = null;
-                        Color bg_Color = null;
-                        Color br_Color = null;
-                        Point2D p2d = null;
-                        Stroke strokes = null;
-                        boolean antia = false;
-                        boolean fill = false;
-                        boolean bg_Transparent = false;
-                        boolean hasBorder = false;
-                        boolean noBG = false;
-                        float alphas = 0;
-                        Font font;
-                        String text;
-                        if (chkfilename.equals(this.getCurrentImageFilename())) {
-                            if (nameObj.equals("Text") || nameObj.equals("Note") || nameObj.equals("StampText")) {
-                                font = new Font(arrStr[6], Integer.parseInt(arrStr[7]), Integer.parseInt(arrStr[8]));
-                                color = new Color(Integer.parseInt(arrStr[9]));
-                                p2d = new Point2D.Double(Double.parseDouble(arrStr[10]), Double.parseDouble(arrStr[11]));
-                                text = arrStr[12];
-                                System.out.println("text : " + text);
-                                antia = Boolean.valueOf(arrStr[13]);
-                                alphas = Float.parseFloat(arrStr[14]);
 
-                                if (nameObj.equals("Text")) {
-                                    AnnotationTextObject copyText = new AnnotationTextObject();
-                                    AnnotationObject copy = copyText.loadText(this, view_users, edit_users, del_users, owner_user, font, color, p2d, text, antia, alphas);
-                                    toCopy.add(copy);
-                                } else if (nameObj.equals("Note")) {
-                                    bg_Color = new Color(Integer.parseInt(arrStr[15]));
-                                    br_Color = new Color(Integer.parseInt(arrStr[16]));
-                                    strokes = new BasicStroke(Float.parseFloat(arrStr[17]));
-                                    bg_Transparent = Boolean.valueOf(arrStr[18]);
-                                    strokeWidth = Double.parseDouble(arrStr[19]);
-                                    xStart = Double.parseDouble(arrStr[20]);
-                                    yStart = Double.parseDouble(arrStr[21]);
-                                    xEnd = Double.parseDouble(arrStr[22]);
-                                    yEnd = Double.parseDouble(arrStr[23]);
-                                    arcWidths = Double.parseDouble(arrStr[24]);
-                                    arcHeights = Double.parseDouble(arrStr[25]);
-                                    AnnotationNoteObject copyNote = new AnnotationNoteObject();
-                                    AnnotationObject copy = copyNote.loadNote(this, view_users, edit_users, del_users, owner_user,
-                                            xStart, yStart, xEnd, yEnd, p2d, font, color, text, bg_Color, br_Color, antia, alphas,
-                                            strokes, bg_Transparent, strokeWidth, arcWidths, arcHeights);
-                                    toCopy.add(copy);
-                                }
-                            } else {
-                                xStart = Double.parseDouble(arrStr[6]);
-                                yStart = Double.parseDouble(arrStr[7]);
-                                xEnd = Double.parseDouble(arrStr[8]);
-                                yEnd = Double.parseDouble(arrStr[9]);
-                                color = new Color(Integer.parseInt(arrStr[10]));
-                                p2d = new Point2D.Double(Double.parseDouble(arrStr[11]), Double.parseDouble(arrStr[12]));
-                                strokes = new BasicStroke(Float.parseFloat(arrStr[13]));
-                                antia = Boolean.valueOf(arrStr[14]);
-                                fill = Boolean.valueOf(arrStr[15]);
-                                alphas = Float.parseFloat(arrStr[16]);
+                    String edit_users = arrStr[1];
+                    String del_users = arrStr[2];
+                    String owner_user = arrStr[3];
+                    System.out.println("this user can see this annotation: " + arrStr[5]);
+                    String chkfilename = arrStr[4];
+                    String nameObj = arrStr[5];
+                    String image_path = "";
+                    double xStart = 0;
+                    double yEnd = 0;
+                    double xEnd = 0;
+                    double yStart = 0;
+                    double xCtrl = 0;
+                    double yCtrl = 0;
+                    double arcWidths = 0;
+                    double arcHeights = 0;
+                    double headMult = 0;
+                    double endWidth = 0;
+                    double tipWidth = 0;
+                    double startWidth = 0;
+                    double strokeWidth = 0;
+                    double width;
+                    double hieght;
+                    Color color = null;
+                    Color bg_Color = null;
+                    Color br_Color = null;
+                    Point2D p2d = null;
+                    Stroke strokes = null;
+                    boolean antia = false;
+                    boolean fill = false;
+                    boolean bg_Transparent = false;
+                    boolean hasBorder = false;
+                    boolean noBG = false;
+                    float alphas = 0;
+                    Font font;
+                    String text;
+                    if (chkfilename.equals(this.getCurrentImageFilename())) {
+                        if (nameObj.equals("Text") || nameObj.equals("Note") || nameObj.equals("StampText")) {
+                            font = new Font(arrStr[6], Integer.parseInt(arrStr[7]), Integer.parseInt(arrStr[8]));
+                            color = new Color(Integer.parseInt(arrStr[9]));
+                            p2d = new Point2D.Double(Double.parseDouble(arrStr[10]), Double.parseDouble(arrStr[11]));
+                            text = arrStr[12];
+                            System.out.println("text : " + text);
+                            antia = Boolean.valueOf(arrStr[13]);
+                            alphas = Float.parseFloat(arrStr[14]);
 
-                                if (nameObj.equals("Oval")) {
-                                    AnnotationOvalObject copyOval = new AnnotationOvalObject();
-                                    AnnotationObject copy = copyOval.loadOval(this, view_users, edit_users, owner_user, del_users, xStart, yEnd, xEnd, yStart, color, p2d, strokes, antia, fill, alphas);
-                                    toCopy.add(copy);
-                                } else if (nameObj.equals("Line")) {
-                                    AnnotationLineObject copyLine = new AnnotationLineObject();
-                                    AnnotationObject copy = copyLine.loadLine(this, view_users, edit_users, del_users, owner_user, xStart, yEnd, xEnd, yStart, color, p2d, strokes, antia, alphas);
-                                    toCopy.add(copy);
-                                } else if (nameObj.equals("Rect")) {
-                                    arcWidths = Double.parseDouble(arrStr[17]);
-                                    arcHeights = Double.parseDouble(arrStr[18]);
+                            if (nameObj.equals("Text")) {
+                                AnnotationTextObject copyText = new AnnotationTextObject();
+                                AnnotationObject copy = copyText.loadText(this, view_users, edit_users, del_users, owner_user, font, color, p2d, text, antia, alphas);
+                                toCopy.add(copy);
+                            } else if (nameObj.equals("Note")) {
+                                bg_Color = new Color(Integer.parseInt(arrStr[15]));
+                                br_Color = new Color(Integer.parseInt(arrStr[16]));
+                                strokes = new BasicStroke(Float.parseFloat(arrStr[17]));
+                                bg_Transparent = Boolean.valueOf(arrStr[18]);
+                                strokeWidth = Double.parseDouble(arrStr[19]);
+                                xStart = Double.parseDouble(arrStr[20]);
+                                yStart = Double.parseDouble(arrStr[21]);
+                                xEnd = Double.parseDouble(arrStr[22]);
+                                yEnd = Double.parseDouble(arrStr[23]);
+                                arcWidths = Double.parseDouble(arrStr[24]);
+                                arcHeights = Double.parseDouble(arrStr[25]);
+                                AnnotationNoteObject copyNote = new AnnotationNoteObject();
+                                AnnotationObject copy = copyNote.loadNote(view_users, edit_users, del_users, owner_user,
+                                        xStart, yStart, xEnd, yEnd, p2d, font, color, text, bg_Color, br_Color, antia, alphas,
+                                        strokes, bg_Transparent, strokeWidth, arcWidths, arcHeights);
+                                toCopy.add(copy);
+                            }
+                        } else {
+                            xStart = Double.parseDouble(arrStr[6]);
+                            yStart = Double.parseDouble(arrStr[7]);
+                            xEnd = Double.parseDouble(arrStr[8]);
+                            yEnd = Double.parseDouble(arrStr[9]);
+                            color = new Color(Integer.parseInt(arrStr[10]));
+                            p2d = new Point2D.Double(Double.parseDouble(arrStr[11]), Double.parseDouble(arrStr[12]));
+                            strokes = new BasicStroke(Float.parseFloat(arrStr[13]));
+                            antia = Boolean.valueOf(arrStr[14]);
+                            fill = Boolean.valueOf(arrStr[15]);
+                            alphas = Float.parseFloat(arrStr[16]);
 
-                                    AnnotationRectObject copyRect = new AnnotationRectObject();
-                                    AnnotationObject copy = copyRect.loadRect(this, view_users, edit_users, del_users, owner_user, xStart, yEnd, xEnd, yStart, color, p2d, strokes, antia, fill, alphas, arcWidths, arcHeights);
-                                    toCopy.add(copy);
-                                } else if (nameObj.equals("Arrow")) {
-                                    xCtrl = Double.parseDouble(arrStr[17]);
-                                    yCtrl = Double.parseDouble(arrStr[18]);
-                                    headMult = Double.parseDouble(arrStr[19]);
-                                    endWidth = Double.parseDouble(arrStr[20]);
-                                    tipWidth = Double.parseDouble(arrStr[21]);
-                                    startWidth = Double.parseDouble(arrStr[22]);
+                            if (nameObj.equals("Oval")) {
+                                AnnotationOvalObject copyOval = new AnnotationOvalObject();
+                                AnnotationObject copy = copyOval.loadOval(this, view_users, edit_users, owner_user, del_users, xStart, yEnd, xEnd, yStart, color, p2d, strokes, antia, fill, alphas);
+                                toCopy.add(copy);
+                            } else if (nameObj.equals("Line")) {
+                                AnnotationLineObject copyLine = new AnnotationLineObject();
+                                AnnotationObject copy = copyLine.loadLine(this, view_users, edit_users, del_users, owner_user, xStart, yEnd, xEnd, yStart, color, p2d, strokes, antia, alphas);
+                                toCopy.add(copy);
+                            } else if (nameObj.equals("Rect")) {
+                                arcWidths = Double.parseDouble(arrStr[17]);
+                                arcHeights = Double.parseDouble(arrStr[18]);
 
-                                    AnnotationQuadArrowObject copyArrow = new AnnotationQuadArrowObject();
-                                    AnnotationObject copy = copyArrow.loadArrow(this, view_users, edit_users, del_users, owner_user, xStart, yStart, xEnd, yEnd, xCtrl, yCtrl, headMult, endWidth, tipWidth, startWidth, color, p2d, strokes, antia, fill, alphas);
-                                    toCopy.add(copy);
-                                }
+                                AnnotationRectObject copyRect = new AnnotationRectObject();
+                                AnnotationObject copy = copyRect.loadRect(this, view_users, edit_users, del_users, owner_user, xStart, yEnd, xEnd, yStart, color, p2d, strokes, antia, fill, alphas, arcWidths, arcHeights);
+                                toCopy.add(copy);
+                            } else if (nameObj.equals("Arrow")) {
+                                xCtrl = Double.parseDouble(arrStr[17]);
+                                yCtrl = Double.parseDouble(arrStr[18]);
+                                headMult = Double.parseDouble(arrStr[19]);
+                                endWidth = Double.parseDouble(arrStr[20]);
+                                tipWidth = Double.parseDouble(arrStr[21]);
+                                startWidth = Double.parseDouble(arrStr[22]);
+
+                                AnnotationQuadArrowObject copyArrow = new AnnotationQuadArrowObject();
+                                AnnotationObject copy = copyArrow.loadArrow(this, view_users, edit_users, del_users, owner_user, xStart, yStart, xEnd, yEnd, xCtrl, yCtrl, headMult, endWidth, tipWidth, startWidth, color, p2d, strokes, antia, fill, alphas);
+                                toCopy.add(copy);
                             }
                         }
-
-                    } else {
-                        System.out.println("this user can not see this annotation: " + arrStr[5]);
                     }
 
                 }
@@ -1133,34 +1128,6 @@ public class AnnotationPaintPanel extends JPanel implements MouseListener, Mouse
         } else {
             System.out.println("no annotation file of this image!!!!!");
         }
-    }
-
-    private boolean chk_user(String users) {
-        int i = 0;
-        int start = 0;
-        int end;
-        Vector user_vector = new Vector();
-        while (start != users.length()) {
-            end = users.indexOf('>', start);
-            if (end >= 0) {
-                user_vector.add(users.substring(start, end));
-                start = end + 1;
-                i++;
-            }
-        }
-        //boolean chk_user = Boolean.valueOf(user_vector.get(0).toString());
-        if (user_vector.get(0).equals("alluser")) {
-            return true;
-        } else {
-            for (int j = 0; j < user_vector.size(); j++) {
-                String user = user_vector.get(j).toString();
-                if (user.equalsIgnoreCase(str_userid)) {
-                    return true;
-                }
-            }
-        }
-
-        return false;
     }
 
     /*
@@ -1346,7 +1313,7 @@ public class AnnotationPaintPanel extends JPanel implements MouseListener, Mouse
                     temp = (String) iterator.next();
                     int index1 = temp.indexOf("|");
                     String str_user = temp.substring(0, index1);
-                    boolean this_user = chk_user(str_user);
+//                    boolean this_user = chk_user(str_user);
                     String str_1 = temp.substring(index1 + 1, temp.length());
                     int index2 = str_1.indexOf("|");
                     String str_edit_user = str_1.substring(0, index2);
@@ -1360,7 +1327,7 @@ public class AnnotationPaintPanel extends JPanel implements MouseListener, Mouse
                     int index5 = str_4.indexOf("|");
                     String str_imagename = str_4.substring(0, index5);
 
-                    if (this_user == false || !str_imagename.equals(this.getCurrentImageFilename())) {
+                    if (!str_imagename.equals(this.getCurrentImageFilename())) {
                         bw.write(temp);
                         bw.write("\n");
                         temp_anno.add(temp);
@@ -1591,7 +1558,7 @@ public class AnnotationPaintPanel extends JPanel implements MouseListener, Mouse
                     break;
                 case AnnotationPaintPanel.MODE_NOTE:
                     Point2D locationStart = new Point((int) (e.getPoint().x / zoom), (int) (e.getPoint().y / zoom));
-                    new AnnotationNoteDialog(this, locationStart, this.antialiased);
+                    new NoteDialog(this, locationStart, this.antialiased);
                     break;
                 case AnnotationPaintPanel.MODE_SELECT:
                     double closestDist = Double.MAX_VALUE;
@@ -1748,7 +1715,7 @@ public class AnnotationPaintPanel extends JPanel implements MouseListener, Mouse
 
                 if (object instanceof AnnotationNoteObject) {
                     AnnotationNoteObject notes = (AnnotationNoteObject) object;
-                    new AnnotationNoteDialog(this, notes, this.antialiased);
+                    new NoteDialog(this, notes, this.antialiased);
                 }
             }
         }

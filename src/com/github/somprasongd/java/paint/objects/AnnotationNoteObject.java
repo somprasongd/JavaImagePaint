@@ -51,8 +51,7 @@ public class AnnotationNoteObject extends AnnotationObject {
 
     }
 
-    public AnnotationNoteObject(AnnotationPaintPanel paintPanel,
-            Font font, Color textColor, Color bgColor, Color brColor, Point2D locationStart, String text, boolean antialiased,
+    public AnnotationNoteObject(Font font, Color textColor, Color bgColor, Color brColor, Point2D locationStart, String text, boolean antialiased,
             Stroke stroke, boolean bgTransparent, double arcWidth, double arcHeight, float alpha) {
 
         super(textColor, null, antialiased, alpha);
@@ -395,7 +394,7 @@ public class AnnotationNoteObject extends AnnotationObject {
 
     @Override
     public String getInfo() {
-        String filename = paintPanel.getCurrentImageFilename();
+//        String filename = paintPanel.getCurrentImageFilename();
 
         String strokes = new StringBuilder().append(((BasicStroke) this.getStroke()).getLineWidth()).toString();
 
@@ -408,7 +407,7 @@ public class AnnotationNoteObject extends AnnotationObject {
         String getlocatStart = new StringBuilder().append(this.getLocationStart().getX()).append("|").append(this.getLocationStart().getY()).toString();
 
         return (new StringBuilder()).
-                append(filename).append("|Note|").append(fonts).append("|").append(this.textColor.getRGB()).append("|").
+               append("Note|").append(fonts).append("|").append(this.textColor.getRGB()).append("|").
                 append(getlocatStart).append("|").append(this.getText()).append("|").append(this.isAntialiased()).
                 append("|").append(this.getAlpha()).append("|").append(this.bgColor.getRGB()).append("|").append(this.bdColor.getRGB()).
                 append("|").append(strokes).append("|").append(this.bgTransparent).append("|").append(this.getStrokeWidth()).
@@ -416,13 +415,13 @@ public class AnnotationNoteObject extends AnnotationObject {
                 append("|").append(this.getArcHeight()).append("|").toString();
     }
 
-    public AnnotationObject loadNote(AnnotationPaintPanel paintPanel, String view_user, String edit_user, String del_user,
+    public AnnotationObject loadNote(String view_user, String edit_user, String del_user,
             String owner_user, double xStart, double yStart, double xEnd, double yEnd, Point2D locStart, Font font,
             Color textcolor, String text, Color bgcolor, Color brcolor,
             boolean antia, float alpha, Stroke stroke, boolean bg_Transparent, double width,
             double arcWidth, double arcHeight) {
 
-        AnnotationNoteObject copy = new AnnotationNoteObject(paintPanel,
+        AnnotationNoteObject copy = new AnnotationNoteObject(
                 font, textcolor, bgcolor, brcolor, locStart, text, antia, stroke, bg_Transparent, arcWidth, arcHeight, alpha);
 
         copy.locationEnd = new Point2D.Double(xEnd, yEnd);

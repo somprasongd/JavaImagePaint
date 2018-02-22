@@ -2,7 +2,6 @@ package annotation;
 
 import com.github.somprasongd.java.paint.utils.Language;
 import javax.swing.*;
-import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;

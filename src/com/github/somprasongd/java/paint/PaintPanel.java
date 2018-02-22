@@ -13,14 +13,21 @@ import com.github.somprasongd.java.paint.objects.AnnotationQuadArrowObject;
 import com.github.somprasongd.java.paint.objects.AnnotationRectObject;
 import com.github.somprasongd.java.paint.objects.AnnotationTextObject;
 import com.github.somprasongd.java.paint.utils.BufferedImageTool;
+import java.awt.AlphaComposite;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.MediaTracker;
 import java.awt.Point;
+import java.awt.RenderingHints;
 import java.awt.Stroke;
+import java.awt.geom.AffineTransform;
+import java.awt.geom.Point2D;
+import java.awt.geom.RoundRectangle2D;
 import java.awt.image.BufferedImage;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -54,18 +61,23 @@ public class PaintPanel extends javax.swing.JPanel {
     public static final int MODE_COLORPICK = 10;
     public static final int MODE_NOTE = 11;
     public static final int MODE_NONE = 100;
-    private List selectedObjects;
+    private List paintObjects = new ArrayList();
+    private List selectedObjects = new ArrayList();
+    private List tempObjects = new ArrayList();
+    private List displayObjects = new ArrayList();
     private int currentMode;
     private JFileChooser saveChooser;
     private File currentFile;
     private BufferedImage img;
     private double zoom;
     private double currentAngle;
-    private ArrayList paintObjects;
-    private ArrayList tempObjects;
+
     private int img_width;
     private int img_height;
+    private int new_width;
+    private int new_height;
     private boolean filled;
+    private Color bgColor = new Color(236, 233, 216);
     private Color textColor;
     private Color drawColor;
     private Stroke stroke;
@@ -73,28 +85,36 @@ public class PaintPanel extends javax.swing.JPanel {
     private PropertyChangeListener pclColor = new PropertyChangeListener() {
         @Override
         public void propertyChange(PropertyChangeEvent evt) {
-            setDrawColor((Color) evt.getNewValue());
+            if ("fgColor".equals(evt.getPropertyName())) {
+                setDrawColor((Color) evt.getNewValue());
+            }
         }
     };
 
     private PropertyChangeListener pclFontColor = new PropertyChangeListener() {
         @Override
         public void propertyChange(PropertyChangeEvent evt) {
-            setDrawColor((Color) evt.getNewValue());
+            if ("fontColor".equals(evt.getPropertyName())) {
+                setTextColor((Color) evt.getNewValue());
+            }
         }
     };
 
     private PropertyChangeListener pclStroke = new PropertyChangeListener() {
         @Override
         public void propertyChange(PropertyChangeEvent evt) {
-            setStroke((Stroke) evt.getNewValue());
+            if ("stroke".equals(evt.getPropertyName())) {
+                setStroke((Stroke) evt.getNewValue());
+            }
         }
     };
 
     private PropertyChangeListener pclFont = new PropertyChangeListener() {
         @Override
         public void propertyChange(PropertyChangeEvent evt) {
-            setTextFont((Font) evt.getNewValue());
+            if ("font".equals(evt.getPropertyName())) {
+                setTextFont((Font) evt.getNewValue());
+            }
         }
     };
     private float alpha;
@@ -109,6 +129,7 @@ public class PaintPanel extends javax.swing.JPanel {
         strokeChooserPanel.addPropertyChangeListener(pclStroke);
         fontChooserPanel.addPropertyChangeListener(pclColor);
         fontChooserPanel.addPropertyChangeListenerColorChooser(pclFont);
+        setImage(null);
     }
 
     /**
@@ -141,6 +162,7 @@ public class PaintPanel extends javax.swing.JPanel {
         btnSave = new javax.swing.JButton();
         panelDraw = new javax.swing.JPanel();
         scrollPane = new javax.swing.JScrollPane();
+        panelRenderImage = new javax.swing.JPanel();
         jPanel1 = new javax.swing.JPanel();
         bottomToolbar = new javax.swing.JToolBar();
         btnZoomReset = new javax.swing.JButton();
@@ -282,6 +304,7 @@ public class PaintPanel extends javax.swing.JPanel {
         topToolbar.add(tglBtnDrawText);
 
         fontChooserPanel.setMaximumSize(new java.awt.Dimension(350, 100));
+        fontChooserPanel.setPropName("font");
         topToolbar.add(fontChooserPanel);
         topToolbar.add(jSeparator3);
 
@@ -299,11 +322,21 @@ public class PaintPanel extends javax.swing.JPanel {
 
         add(topToolbar, java.awt.BorderLayout.NORTH);
 
-        panelDraw.setLayout(new java.awt.BorderLayout());
+        panelDraw.setLayout(new java.awt.GridBagLayout());
 
         scrollPane.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
         scrollPane.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
-        panelDraw.add(scrollPane, java.awt.BorderLayout.CENTER);
+
+        panelRenderImage.setBackground(new java.awt.Color(255, 255, 255));
+        panelRenderImage.setLayout(new java.awt.GridBagLayout());
+        scrollPane.setViewportView(panelRenderImage);
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
+        panelDraw.add(scrollPane, gridBagConstraints);
 
         add(panelDraw, java.awt.BorderLayout.CENTER);
 
@@ -468,6 +501,7 @@ public class PaintPanel extends javax.swing.JPanel {
     private javax.swing.JToolBar.Separator jSeparator5;
     private com.github.somprasongd.java.paint.components.LocationPanel locationPanel;
     private javax.swing.JPanel panelDraw;
+    private javax.swing.JPanel panelRenderImage;
     private javax.swing.JScrollPane scrollPane;
     private javax.swing.JSlider sliderAlpha;
     private com.github.somprasongd.java.paint.components.StrokeChooserPanel strokeChooserPanel;
@@ -520,7 +554,7 @@ public class PaintPanel extends javax.swing.JPanel {
     /**
      * load image to show on the screen that call by JImageThumbnailPanel
      *
-     * @param url_anno url_anno object is a url_anno of an image
+     * @param url is a url_anno of an image
      */
     public void loadNewImage(URL url) {
         if (url != null) {
@@ -821,6 +855,7 @@ public class PaintPanel extends javax.swing.JPanel {
         }
         this.updatePanel();
     }
+
     /**
      * Save an iamge and all annotion together
      *
@@ -913,4 +948,158 @@ public class PaintPanel extends javax.swing.JPanel {
 //        }
 //        return false;
 //    }
+    /**
+     *
+     * @param g
+     */
+    @Override
+    public void paintComponent(Graphics g) {
+        super.paintComponent(g);
+        Graphics2D g2 = (Graphics2D) g;
+
+        AffineTransform origXform = g2.getTransform();
+        AffineTransform newXform = (AffineTransform) (origXform.clone());
+
+        //center of rotation is center of the image
+        int xRot = (int) (img.getWidth() * zoom) / 2;
+        int yRot = (int) (img.getHeight() * zoom) / 2;
+        newXform.rotate(Math.toRadians(currentAngle), xRot, yRot);
+
+        double transW = xRot - (int) (new_width * zoom) / 2;
+        double transH = yRot - (int) (new_height * zoom) / 2;
+        if (transW < 0) {
+            transW *= -1;
+        }
+        if (transH < 0) {
+            transH *= -1;
+        }
+
+        if (img.getWidth() - img.getHeight() > 0) {
+            if (currentAngle == 90.0) {
+                newXform.translate(transW * zoom, transH * zoom);
+            }
+            if (currentAngle == 270.0) {
+                newXform.translate(-transW * zoom, -transH * zoom);
+            }
+        } else {
+            if (currentAngle == 90.0) {
+                newXform.translate(-transW * zoom, -transH * zoom);
+            }
+            if (currentAngle == 270.0) {
+                newXform.translate(transW * zoom, transH * zoom);
+            }
+        }
+
+        g2.setTransform(newXform);
+
+        //zoomed bits
+        g2.scale((double) zoom, (double) zoom);
+        g2.setColor(bgColor);
+        g2.fillRect(0, 0, img.getWidth(), img.getHeight());
+
+        //unzoomded bits
+        g2.drawImage(img, 0, 0, null);
+        //g2.setTransform(origXform);
+
+        if (zoom >= 5) {
+            g2.scale(1.0 / (double) zoom, 1.0 / (double) zoom);
+            for (int x = 0; x < img.getWidth() * zoom; x += zoom) {
+                g2.setColor(Color.lightGray);
+                g2.drawLine(x, 0, x, (int) (img.getHeight() * zoom));
+            }
+            for (int y = 0; y < img.getHeight() * zoom; y += zoom) {
+                g2.setColor(Color.lightGray);
+                g2.drawLine(0, y, (int) (img.getWidth() * zoom), y);
+            }
+            g2.scale(zoom, zoom);
+        }
+
+        //displayObjects
+        for (int i = 0; i < displayObjects.size(); i++) {
+            AnnotationObject paintObject = (AnnotationObject) displayObjects.get(i);
+            paintObject.addToGraphics(g2);
+        }
+
+        //paint objects
+        g2.drawImage(getObjectsImage(paintObjects), 0, 0, null);
+        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        //paint highlight points for those objects selected
+        if (currentMode == MODE_SELECT) {
+            for (int o = 0; o < selectedObjects.size(); o++) {
+                g2.setColor(Color.magenta);
+                AnnotationObject paintObject = (AnnotationObject) selectedObjects.get(o);
+                Point2D[] points = paintObject.getHighlightPoints();
+                for (int i = 0; i < points.length; i++) {
+                    Point2D point = points[i];
+                    g2.translate(paintObject.getTranslation()[0], paintObject.getTranslation()[1]);
+                    g2.setStroke(new BasicStroke((float) (1.0 / zoom)));
+                    RoundRectangle2D.Double rect = new RoundRectangle2D.Double((point.getX() - 2), (point.getY() - 2), 5, 5, 2, 2);
+                    g2.draw(rect);
+                    g2.translate(-paintObject.getTranslation()[0], -paintObject.getTranslation()[1]);
+                }
+            }
+        }
+
+        //paint temp objects &  hightliged points
+        for (int t = 0; t < tempObjects.size(); t++) {
+            AnnotationObject tempObject = (AnnotationObject) tempObjects.get(t);
+            g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.5f));
+            tempObject.addToGraphics(g2);
+            if (tempObject.isSelected() && currentMode == MODE_SELECT) {
+                Point2D[] points = tempObject.getHighlightPoints();
+                for (int i = 0; i < points.length; i++) {
+                    Point2D point = points[i];
+                    g2.setColor(Color.magenta);
+                    g2.translate(tempObject.getTranslation()[0], tempObject.getTranslation()[1]);
+                    g2.setStroke(new BasicStroke((float) (1.0 / zoom)));
+                    RoundRectangle2D.Double rect = new RoundRectangle2D.Double((point.getX() - 2), (point.getY() - 2), 5, 5, 2, 2);
+                    g2.draw(rect);
+                    int index = tempObject.getCurrentPointIndex();
+                    if (index == i) {
+                        g2.fill(rect);
+                    }
+                    g2.translate(-tempObject.getTranslation()[0], -tempObject.getTranslation()[1]);
+                }
+            }
+        }
+
+    }
+
+    /**
+     * Get object image
+     *
+     * @param list
+     * @return
+     */
+    public BufferedImage getObjectsImage(List list) {
+        BufferedImage temp = new BufferedImage(img.getWidth(), img.getHeight(), BufferedImage.TYPE_INT_ARGB);
+        Graphics2D g2 = (Graphics2D) temp.getGraphics();
+        for (Iterator iterator = list.iterator(); iterator.hasNext();) {
+            AnnotationObject paintObject = (AnnotationObject) iterator.next();
+            paintObject.addToGraphics(g2);
+        }
+        return temp;
+    }
+
+    /**
+     * Set image size
+     */
+    private void setImageSize(int width, int height, boolean copyOld) {
+        BufferedImage old = img;
+//        properties.setProperty("width", "" + width);
+//        properties.setProperty("height", "" + height);
+        img = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+        if (old != null && copyOld) {
+            Graphics g = img.getGraphics();
+            g.drawImage(old, 0, 0, null);
+        }
+    }
+
+    public void setImage(BufferedImage img) {
+        this.img = img;
+        if (img == null) {
+            this.setImageSize(800, 600, false);
+        }
+        updatePanel();
+    }
 }

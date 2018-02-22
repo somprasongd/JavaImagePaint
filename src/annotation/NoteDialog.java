@@ -1,11 +1,13 @@
 /*
- * AnnotationNoteDialog.java
+ * NoteDialog.java
  *
  * Created on 3 มิถุนายน 2551, 11:00 น.
  */
 
 package annotation;
 
+import annotation.AnnotationFontChooserPanel;
+import annotation.AnnotationPaintPanel;
 import com.github.somprasongd.java.paint.objects.AnnotationNoteObject;
 import java.awt.BasicStroke;
 import java.awt.Color;
@@ -28,7 +30,7 @@ import com.github.somprasongd.java.paint.utils.StrokeChooserPanel;
  *
  * @author  Somprasong Damyos
  */
-public class AnnotationNoteDialog extends javax.swing.JDialog implements PropertyChangeListener{
+public class NoteDialog extends javax.swing.JDialog implements PropertyChangeListener{
     
     private AnnotationPaintPanel paintPanel;
     private Point2D locationStart;
@@ -53,7 +55,7 @@ public class AnnotationNoteDialog extends javax.swing.JDialog implements Propert
 
     /** Creates new form AnnotationNoteDialog */
     
-    public AnnotationNoteDialog(AnnotationPaintPanel paintPanel, Point2D locationStart, boolean antialiased) {
+    public NoteDialog(AnnotationPaintPanel paintPanel, Point2D locationStart, boolean antialiased) {
         super(null, DEFAULT_MODALITY_TYPE);
         this.paintPanel = paintPanel;
         this.locationStart = locationStart;
@@ -68,7 +70,7 @@ public class AnnotationNoteDialog extends javax.swing.JDialog implements Propert
         
     }
     // แก้ใขโน๊ตเก่า
-    public AnnotationNoteDialog(AnnotationPaintPanel paintPanel, AnnotationNoteObject noteObj, boolean antialiased){
+    public NoteDialog(AnnotationPaintPanel paintPanel, AnnotationNoteObject noteObj, boolean antialiased){
         super(null, DEFAULT_MODALITY_TYPE);
         this.paintPanel = paintPanel;
         this.noteObj = noteObj;
@@ -88,8 +90,18 @@ public class AnnotationNoteDialog extends javax.swing.JDialog implements Propert
         initComponents();
         note_area.setText(str_note);
         this.setLocationRelativeTo(null);
-        this.show();
-       
+        this.show();       
+    }
+    
+    public void open(Point2D locationStart, boolean antialiased) {
+        this.paintPanel = paintPanel;
+        this.locationStart = locationStart;
+        this.font = new Font("Tahoma", 0, 10);
+        this.antialiased = antialiased;
+        this.strokes = new BasicStroke(1);
+        this.strokeWidth = 1.0;
+        this.setLocationRelativeTo(null);
+        this.setVisible(true);
     }
     
     /** This method is called from within the constructor to
@@ -114,7 +126,7 @@ public class AnnotationNoteDialog extends javax.swing.JDialog implements Propert
         option_panel.setRequestFocusEnabled(false);
         option_panel.setLayout(new javax.swing.BoxLayout(option_panel, javax.swing.BoxLayout.Y_AXIS));
         option_panel.add(font_Panel);
-        fontChooser = new AnnotationFontChooserPanel(font, "font", 1);
+        fontChooser = new AnnotationFontChooserPanel(font, "font");
         fontChooser.addPropertyChangeListener(this);
         font_Panel.add(fontChooser);
         font_Panel.setEnabled(false);
@@ -171,7 +183,7 @@ public class AnnotationNoteDialog extends javax.swing.JDialog implements Propert
                 .addGroup(button_PanelLayout.createSequentialGroup()
                     .addGap(0, 0, Short.MAX_VALUE)
                     .addComponent(ok_button)
-                    .addGap(0, 0, Short.MAX_VALUE)))
+                    .addGap(0, 1, Short.MAX_VALUE)))
         );
         button_PanelLayout.setVerticalGroup(
             button_PanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -207,18 +219,15 @@ public class AnnotationNoteDialog extends javax.swing.JDialog implements Propert
         }
         
         if(!note_after.equals("")){
-            //JImageNoteObject notes = new JImageNoteObject(paintPanel, view_user, edit_user, del_user, owner_user, font, textsColor, bgsColor, brColor, new Point((int)locationStart.getX(), (int)locationStart.getY()), note_after, antialiased, strokes, bgTransparent);
-            AnnotationNoteObject notes = new AnnotationNoteObject(paintPanel, font, textsColor, bgsColor, brColor, new Point((int)locationStart.getX(), (int)locationStart.getY()), note_after, antialiased, strokes, bgTransparent, 0.0, 0.0, 1.0f);
+            AnnotationNoteObject notes = new AnnotationNoteObject(font, textsColor, bgsColor, brColor, new Point((int)locationStart.getX(), (int)locationStart.getY()), note_after, antialiased, strokes, bgTransparent, 0.0, 0.0, 1.0f);
             notes.setStrokeWidth(this.stroke.getStrokeWidth());
-            //notes.setPanel(paintPanel);
-            paintPanel.addNoteObjects(notes);
-            
+            paintPanel.addNoteObjects(notes);            
         }
         
         this.dispose();
     }//GEN-LAST:event_ok_buttonActionPerformed
-    
-    
+        
+    @Override
     public void propertyChange(PropertyChangeEvent evt) {
         if (evt.getPropertyName().equals("font")) {
          font = (Font) evt.getNewValue();
