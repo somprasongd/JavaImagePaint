@@ -8,7 +8,6 @@ import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import java.awt.*;
-import java.awt.event.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -104,16 +103,6 @@ public class AnnotationFontChooserPanel extends JPanel implements ActionListener
       return textItalic;
    }
 
-   /*public JToggleButton getUnderlinedButton()
-    {
-        ImageIcon imageicon = new ImageIcon(getClass().getResource("graphics/underlined.png"));
-        textUnderlined = new JToggleButton(imageicon);
-        textUnderlined.setFocusable(false);
-        textUnderlined.addActionListener(this);
-        textUnderlined.setMargin(new Insets(2, 2, 2, 2));
-        textUnderlined.setToolTipText("Underlined (Not work!!!!!!!!)");
-        return textUnderlined;
-    }*/
 
    public void actionPerformed(ActionEvent e) {
       Font oldF = this.getFont();

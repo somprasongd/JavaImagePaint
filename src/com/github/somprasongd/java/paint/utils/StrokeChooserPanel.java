@@ -74,6 +74,7 @@ public class StrokeChooserPanel extends JPanel implements ActionListener, Change
 
 
    public void actionPerformed(ActionEvent e) {
+       System.out.println("actionPerformed");
       Stroke oldS = this.getStroke();
       this.setStroke(new BasicStroke(((Double) strokeWidth.getModel().getValue()).floatValue()));
       this.setStrokeWidth(((Double) strokeWidth.getModel().getValue()).doubleValue());
@@ -81,6 +82,7 @@ public class StrokeChooserPanel extends JPanel implements ActionListener, Change
    }
 
    public void stateChanged(ChangeEvent e) {
+       System.out.println("stateChanged");
       Stroke oldS = this.getStroke();
       this.setStroke(new BasicStroke(((Double) strokeWidth.getModel().getValue()).floatValue()));
       this.setStrokeWidth(((Double) strokeWidth.getModel().getValue()).doubleValue());

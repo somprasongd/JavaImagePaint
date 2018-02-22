@@ -5,23 +5,34 @@
  */
 package com.github.somprasongd.java.paint;
 
+import com.github.somprasongd.java.paint.objects.AnnotationLineObject;
+import com.github.somprasongd.java.paint.objects.AnnotationNoteObject;
 import com.github.somprasongd.java.paint.objects.AnnotationObject;
 import com.github.somprasongd.java.paint.objects.AnnotationOvalObject;
 import com.github.somprasongd.java.paint.objects.AnnotationQuadArrowObject;
 import com.github.somprasongd.java.paint.objects.AnnotationRectObject;
+import com.github.somprasongd.java.paint.objects.AnnotationTextObject;
 import com.github.somprasongd.java.paint.utils.BufferedImageTool;
+import java.awt.BasicStroke;
+import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.MediaTracker;
 import java.awt.Point;
+import java.awt.Stroke;
 import java.awt.image.BufferedImage;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Vector;
 import javax.imageio.ImageIO;
 import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -55,6 +66,38 @@ public class PaintPanel extends javax.swing.JPanel {
     private int img_width;
     private int img_height;
     private boolean filled;
+    private Color textColor;
+    private Color drawColor;
+    private Stroke stroke;
+
+    private PropertyChangeListener pclColor = new PropertyChangeListener() {
+        @Override
+        public void propertyChange(PropertyChangeEvent evt) {
+            setDrawColor((Color) evt.getNewValue());
+        }
+    };
+
+    private PropertyChangeListener pclFontColor = new PropertyChangeListener() {
+        @Override
+        public void propertyChange(PropertyChangeEvent evt) {
+            setDrawColor((Color) evt.getNewValue());
+        }
+    };
+
+    private PropertyChangeListener pclStroke = new PropertyChangeListener() {
+        @Override
+        public void propertyChange(PropertyChangeEvent evt) {
+            setStroke((Stroke) evt.getNewValue());
+        }
+    };
+
+    private PropertyChangeListener pclFont = new PropertyChangeListener() {
+        @Override
+        public void propertyChange(PropertyChangeEvent evt) {
+            setTextFont((Font) evt.getNewValue());
+        }
+    };
+    private float alpha;
 
     /**
      * Creates new form PaintPanel
@@ -62,6 +105,10 @@ public class PaintPanel extends javax.swing.JPanel {
     public PaintPanel() {
         initComponents();
         setCurrentMode(PaintPanel.MODE_NONE);
+        btnColor.addPropertyChangeListener(pclColor);
+        strokeChooserPanel.addPropertyChangeListener(pclStroke);
+        fontChooserPanel.addPropertyChangeListener(pclColor);
+        fontChooserPanel.addPropertyChangeListenerColorChooser(pclFont);
     }
 
     /**
@@ -83,11 +130,13 @@ public class PaintPanel extends javax.swing.JPanel {
         tglBtnDrawRectangle = new javax.swing.JToggleButton();
         tglBtnDrawOval = new javax.swing.JToggleButton();
         tglBtnDrawArrow = new javax.swing.JToggleButton();
-        jToggleButton2 = new javax.swing.JToggleButton();
-        btnColor = new javax.swing.JButton();
+        tglBtnFillColor = new javax.swing.JToggleButton();
+        btnColor = new com.github.somprasongd.java.paint.components.ColorButton();
+        strokeChooserPanel = new com.github.somprasongd.java.paint.components.StrokeChooserPanel();
         jSeparator2 = new javax.swing.JToolBar.Separator();
-        tglBtnDrawText = new javax.swing.JToggleButton();
         tglBtnDrawNote = new javax.swing.JToggleButton();
+        tglBtnDrawText = new javax.swing.JToggleButton();
+        fontChooserPanel = new com.github.somprasongd.java.paint.components.FontChooserPanel();
         jSeparator3 = new javax.swing.JToolBar.Separator();
         btnSave = new javax.swing.JButton();
         panelDraw = new javax.swing.JPanel();
@@ -97,6 +146,10 @@ public class PaintPanel extends javax.swing.JPanel {
         btnZoomReset = new javax.swing.JButton();
         btnZoomOut = new javax.swing.JButton();
         btnZoomIn = new javax.swing.JButton();
+        jSeparator4 = new javax.swing.JToolBar.Separator();
+        sliderAlpha = new javax.swing.JSlider();
+        jSeparator5 = new javax.swing.JToolBar.Separator();
+        jButton1 = new javax.swing.JButton();
         locationPanel = new com.github.somprasongd.java.paint.components.LocationPanel();
 
         setLayout(new java.awt.BorderLayout());
@@ -184,19 +237,36 @@ public class PaintPanel extends javax.swing.JPanel {
         });
         topToolbar.add(tglBtnDrawArrow);
 
-        jToggleButton2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/github/somprasongd/java/paint/icons/fillColor.png"))); // NOI18N
-        jToggleButton2.setToolTipText(bundle.getString("FILL_COLOR")); // NOI18N
-        jToggleButton2.setFocusable(false);
-        jToggleButton2.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        jToggleButton2.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        topToolbar.add(jToggleButton2);
+        tglBtnFillColor.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/github/somprasongd/java/paint/icons/fillColor.png"))); // NOI18N
+        tglBtnFillColor.setToolTipText(bundle.getString("FILL_COLOR")); // NOI18N
+        tglBtnFillColor.setFocusable(false);
+        tglBtnFillColor.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        tglBtnFillColor.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        topToolbar.add(tglBtnFillColor);
 
-        btnColor.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/github/somprasongd/java/paint/icons/selectColor.png"))); // NOI18N
+        String iconChooseColor = getClass().getResource("/com/github/somprasongd/java/paint/icons/selectColor.png").toString();
+        btnColor.setText("<html><body><img src=\"" + iconChooseColor + "\"></body></html>");
         btnColor.setFocusable(false);
-        btnColor.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        btnColor.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnColor.setPropName("fgColor");
         topToolbar.add(btnColor);
+
+        strokeChooserPanel.setMaximumSize(new java.awt.Dimension(50, 50));
+        strokeChooserPanel.setPropName("stroke");
+        topToolbar.add(strokeChooserPanel);
         topToolbar.add(jSeparator2);
+
+        buttonGroupAction.add(tglBtnDrawNote);
+        tglBtnDrawNote.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/github/somprasongd/java/paint/icons/draw_note.png"))); // NOI18N
+        tglBtnDrawNote.setToolTipText(bundle.getString("DRAW_NOTE")); // NOI18N
+        tglBtnDrawNote.setFocusable(false);
+        tglBtnDrawNote.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        tglBtnDrawNote.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        tglBtnDrawNote.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                tglBtnDrawNoteActionPerformed(evt);
+            }
+        });
+        topToolbar.add(tglBtnDrawNote);
 
         buttonGroupAction.add(tglBtnDrawText);
         tglBtnDrawText.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/github/somprasongd/java/paint/icons/draw_text.png"))); // NOI18N
@@ -211,18 +281,8 @@ public class PaintPanel extends javax.swing.JPanel {
         });
         topToolbar.add(tglBtnDrawText);
 
-        buttonGroupAction.add(tglBtnDrawNote);
-        tglBtnDrawNote.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/github/somprasongd/java/paint/icons/draw_note.png"))); // NOI18N
-        tglBtnDrawNote.setToolTipText(bundle.getString("DRAW_NOTE")); // NOI18N
-        tglBtnDrawNote.setFocusable(false);
-        tglBtnDrawNote.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        tglBtnDrawNote.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        tglBtnDrawNote.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                tglBtnDrawNoteActionPerformed(evt);
-            }
-        });
-        topToolbar.add(tglBtnDrawNote);
+        fontChooserPanel.setMaximumSize(new java.awt.Dimension(350, 100));
+        topToolbar.add(fontChooserPanel);
         topToolbar.add(jSeparator3);
 
         btnSave.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/github/somprasongd/java/paint/icons/save.png"))); // NOI18N
@@ -287,6 +347,31 @@ public class PaintPanel extends javax.swing.JPanel {
             }
         });
         bottomToolbar.add(btnZoomIn);
+        bottomToolbar.add(jSeparator4);
+
+        sliderAlpha.setMaximum(255);
+        sliderAlpha.setToolTipText(bundle.getString("ALPHA")); // NOI18N
+        sliderAlpha.setValue(255);
+        sliderAlpha.setMaximumSize(new java.awt.Dimension(150, 26));
+        sliderAlpha.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                sliderAlphaStateChanged(evt);
+            }
+        });
+        bottomToolbar.add(sliderAlpha);
+        bottomToolbar.add(jSeparator5);
+
+        jButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/github/somprasongd/java/paint/icons/bin.png"))); // NOI18N
+        jButton1.setToolTipText(bundle.getString("DELETE")); // NOI18N
+        jButton1.setFocusable(false);
+        jButton1.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        jButton1.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
+        bottomToolbar.add(jButton1);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -355,23 +440,37 @@ public class PaintPanel extends javax.swing.JPanel {
         this.zoomed(new Point(0, 0));
     }//GEN-LAST:event_btnZoomResetActionPerformed
 
+    private void sliderAlphaStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_sliderAlphaStateChanged
+        float newVal = (float) (sliderAlpha.getValue()) / 255.0f;
+        setAlpha(newVal);
+    }//GEN-LAST:event_sliderAlphaStateChanged
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        deleteSelected();
+    }//GEN-LAST:event_jButton1ActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JToolBar bottomToolbar;
-    private javax.swing.JButton btnColor;
+    private com.github.somprasongd.java.paint.components.ColorButton btnColor;
     private javax.swing.JButton btnSave;
     private javax.swing.JButton btnZoomIn;
     private javax.swing.JButton btnZoomOut;
     private javax.swing.JButton btnZoomReset;
     private javax.swing.ButtonGroup buttonGroupAction;
+    private com.github.somprasongd.java.paint.components.FontChooserPanel fontChooserPanel;
+    private javax.swing.JButton jButton1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JToolBar.Separator jSeparator1;
     private javax.swing.JToolBar.Separator jSeparator2;
     private javax.swing.JToolBar.Separator jSeparator3;
-    private javax.swing.JToggleButton jToggleButton2;
+    private javax.swing.JToolBar.Separator jSeparator4;
+    private javax.swing.JToolBar.Separator jSeparator5;
     private com.github.somprasongd.java.paint.components.LocationPanel locationPanel;
     private javax.swing.JPanel panelDraw;
     private javax.swing.JScrollPane scrollPane;
+    private javax.swing.JSlider sliderAlpha;
+    private com.github.somprasongd.java.paint.components.StrokeChooserPanel strokeChooserPanel;
     private javax.swing.JToggleButton tglBtnDraw;
     private javax.swing.JToggleButton tglBtnDrawArrow;
     private javax.swing.JToggleButton tglBtnDrawLine;
@@ -379,6 +478,7 @@ public class PaintPanel extends javax.swing.JPanel {
     private javax.swing.JToggleButton tglBtnDrawOval;
     private javax.swing.JToggleButton tglBtnDrawRectangle;
     private javax.swing.JToggleButton tglBtnDrawText;
+    private javax.swing.JToggleButton tglBtnFillColor;
     private javax.swing.JToggleButton tglBtnSelect;
     private javax.swing.JToolBar topToolbar;
     // End of variables declaration//GEN-END:variables
@@ -396,19 +496,24 @@ public class PaintPanel extends javax.swing.JPanel {
         this.currentMode = currentMode;
         // clear selected drawed objects
         selectedObjects = new ArrayList();
-        if (currentMode == PaintPanel.MODE_LINE
-                || currentMode == PaintPanel.MODE_OVAL
-                || currentMode == PaintPanel.MODE_RECT) {
-            this.setCursor(new Cursor(Cursor.CROSSHAIR_CURSOR));
-        } else if (currentMode == PaintPanel.MODE_TEXT || currentMode == PaintPanel.MODE_NOTE) {
-            this.setCursor(new Cursor(Cursor.TEXT_CURSOR));
-        } else if (currentMode == PaintPanel.MODE_SELECT
-                || currentMode == PaintPanel.MODE_QUADARROW) {
-            this.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
-        } else {
-            this.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+        switch (currentMode) {
+            case PaintPanel.MODE_LINE:
+            case PaintPanel.MODE_OVAL:
+            case PaintPanel.MODE_RECT:
+                this.setCursor(new Cursor(Cursor.CROSSHAIR_CURSOR));
+                break;
+            case PaintPanel.MODE_TEXT:
+            case PaintPanel.MODE_NOTE:
+                this.setCursor(new Cursor(Cursor.TEXT_CURSOR));
+                break;
+            case PaintPanel.MODE_SELECT:
+            case PaintPanel.MODE_QUADARROW:
+                this.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+                break;
+            default:
+                this.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+                break;
         }
-        //autoSaveAnnotaion();System.out.println("current");
         this.updatePanel();
     }
 
@@ -447,6 +552,275 @@ public class PaintPanel extends javax.swing.JPanel {
         this.updatePanel();
     }
 
+    // Zoom action
+    /**
+     * Set number of zoom at a time
+     *
+     * @param zoom number of zoom that zoomed at a time
+     */
+    public void setZoom(double zoom) {
+        this.zoom = zoom;
+        if (this.zoom < 0.25) {
+            this.zoom = 0.25;
+        }
+        if (this.zoom > 4.75) {
+            this.zoom = 4.75;
+        }
+    }
+
+    /**
+     * Get zoom
+     *
+     * @return
+     */
+    public double getZoom() {
+        return zoom;
+    }
+
+    /**
+     *
+     * @param center center point of zoomed
+     */
+    public void zoomed(Point center) {
+        Dimension newSize = new Dimension((int) (img.getWidth() * zoom), (int) (img.getHeight() * zoom));
+        if (scrollPane != null) {
+            Dimension currentSize = this.getPreferredSize();
+            double ratio = (double) newSize.getHeight() / (double) currentSize.getHeight();
+
+            Point currentLoc = scrollPane.getViewport().getViewPosition();
+
+            Dimension viewSize = scrollPane.getViewport().getExtentSize();
+            int xOff = center.x - currentLoc.x;
+            int yOff = center.y - currentLoc.y;
+
+            Point newCent = new Point((int) (center.x * ratio), (int) (center.y * ratio));
+
+            int newXLoc = newCent.x - xOff;
+            int newYLoc = newCent.y - yOff;
+            if (newXLoc > newSize.getWidth() - viewSize.getWidth()) {
+                newXLoc = (int) newSize.getWidth() - (int) viewSize.getWidth();
+            }
+            if (newXLoc < 0) {
+                newXLoc = 0;
+            }
+            if (newYLoc > newSize.getHeight() - viewSize.getHeight()) {
+                newYLoc = (int) newSize.getHeight() - (int) viewSize.getHeight();
+            }
+            if (newYLoc < 0) {
+                newYLoc = 0;
+            }
+            Point newLoc = new Point(newXLoc, newYLoc);
+
+            this.setPreferredSize(newSize);
+            this.revalidate();
+            scrollPane.getViewport().setViewPosition(newLoc);
+
+            if (locationPanel != null) {
+                int x = (int) (center.getX() / zoom);
+                int y = (int) (center.getY() / zoom);
+
+                if (x >= 0 && x < img.getWidth() && y >= 0 && y < img.getHeight()) {
+                    locationPanel.updateLocation(new Point(x, y));
+                } else {
+                    locationPanel.updateLocation(null);
+                }
+                locationPanel.repaint();
+            }
+            this.updatePanel();
+        } else {
+            this.setPreferredSize(newSize);
+            this.revalidate();
+            this.updatePanel();
+        }
+    }
+
+    /**
+     * Check the button fill was selected or not
+     *
+     * @return true - if it was selected
+     * <br>
+     * false - in otherwise
+     *
+     */
+    public boolean isFilled() {
+        return filled;
+    }
+
+    /**
+     * Set Filled
+     *
+     * @param filled fill is true when this button selected and false in
+     * otherwise
+     */
+    public void setFilled(boolean filled) {
+        this.filled = filled;
+//        properties.setProperty("filled", "" + filled);
+        if (selectedObjects != null) {
+            for (Iterator iterator = selectedObjects.iterator(); iterator.hasNext();) {
+                AnnotationObject paintObject = (AnnotationObject) iterator.next();
+                if (paintObject instanceof AnnotationRectObject) {
+                    ((AnnotationRectObject) paintObject).setFilled(filled);
+                    continue;
+                }
+                if (paintObject instanceof AnnotationOvalObject) {
+                    ((AnnotationOvalObject) paintObject).setFilled(filled);
+                    continue;
+                }
+                if (paintObject instanceof AnnotationQuadArrowObject) {
+                    ((AnnotationQuadArrowObject) paintObject).setFilled(filled);
+                }
+            }
+            this.updatePanel();
+        }
+    }
+
+    /**
+     * Get color of the rectangle, oval, line or arrow objects
+     *
+     * @return
+     *
+     */
+    public Color getDrawColor() {
+        return drawColor;
+    }
+
+    /**
+     * Set color of the rectangle, oval, line or arrow objects
+     *
+     * @param drawColor
+     */
+    public void setDrawColor(Color drawColor) {
+        this.drawColor = drawColor;
+//        properties.setProperty("drawcolor", "" + drawColor.getRGB());
+        for (Iterator iterator = selectedObjects.iterator(); iterator.hasNext();) {
+            AnnotationObject paintObject = (AnnotationObject) iterator.next();
+            if (paintObject instanceof AnnotationTextObject
+                    || paintObject instanceof AnnotationNoteObject) {
+                continue;
+            }
+            paintObject.setColor(drawColor);
+        }
+        this.updatePanel();
+    }
+
+    /**
+     * Get text's color
+     *
+     * @return
+     */
+    public Color getTextColor() {
+        return textColor;
+    }
+
+    /**
+     * Set text's color
+     *
+     * @param textColor
+     */
+    public void setTextColor(Color textColor) {
+        this.textColor = textColor;
+//        properties.setProperty("textcolor", "" + textColor.getRGB());
+        for (Iterator iterator = selectedObjects.iterator(); iterator.hasNext();) {
+            AnnotationObject paintObject = (AnnotationObject) iterator.next();
+            if (paintObject instanceof AnnotationTextObject) {
+                paintObject.setColor(textColor);
+            }
+        }
+        this.updatePanel();
+    }
+
+    /**
+     * Get stroke
+     *
+     * @return
+     */
+    public Stroke getStroke() {
+        return stroke;
+    }
+
+    /**
+     * set stroke
+     *
+     * @param stroke
+     */
+    public void setStroke(Stroke stroke) {
+        this.stroke = stroke;
+//        properties.setProperty("stroke", "" + ((BasicStroke) stroke).getLineWidth());
+        if (selectedObjects != null) {
+            for (Iterator iterator = selectedObjects.iterator(); iterator.hasNext();) {
+                AnnotationObject paintObject = (AnnotationObject) iterator.next();
+                if (paintObject instanceof AnnotationRectObject) {
+                    ((AnnotationRectObject) paintObject).setStroke(stroke);
+                    continue;
+                }
+                if (paintObject instanceof AnnotationOvalObject) {
+                    ((AnnotationOvalObject) paintObject).setStroke(stroke);
+                    continue;
+                }
+                if (paintObject instanceof AnnotationLineObject) {
+                    ((AnnotationLineObject) paintObject).setStroke(stroke);
+                    continue;
+                }
+                if (paintObject instanceof AnnotationQuadArrowObject) {
+                    ((AnnotationQuadArrowObject) paintObject).setStroke(stroke);
+                }
+            }
+            this.updatePanel();
+        }
+    }
+
+    public void setTextFont(Font font) {
+//        if (properties != null) {
+//            properties.setProperty("fontname", font.getName());
+//            properties.setProperty("fonttype", "" + font.getStyle());
+//            properties.setProperty("fontsize", "" + font.getSize());
+//        }
+
+        if (selectedObjects != null) {
+            for (Iterator iterator = selectedObjects.iterator(); iterator.hasNext();) {
+                AnnotationObject paintObject = (AnnotationObject) iterator.next();
+                if (paintObject instanceof AnnotationTextObject) {
+                    ((AnnotationTextObject) paintObject).setFont(font);
+                }
+            }
+            this.updatePanel();
+        }
+    }
+
+    /**
+     * Get an alphas
+     *
+     * @return alpha
+     */
+    public float getAlpha() {
+        return alpha;
+    }
+
+    /**
+     * Set an alpha
+     *
+     * @param alpha
+     */
+    public void setAlpha(float alpha) {
+        this.alpha = alpha;
+//        properties.setProperty("alpha", "" + alpha);
+        if (selectedObjects != null) {
+            for (Iterator iterator = selectedObjects.iterator(); iterator.hasNext();) {
+                AnnotationObject paintObject = (AnnotationObject) iterator.next();
+                paintObject.setAlpha(this.alpha);
+            }
+            this.updatePanel();
+        }
+    }
+
+    public void deleteSelected() {
+        for (Iterator iterator = selectedObjects.iterator(); iterator.hasNext();) {
+            AnnotationObject paintObject = (AnnotationObject) iterator.next();
+            paintObjects.remove(paintObject);
+            selectedObjects.remove(paintObject);
+        }
+        this.updatePanel();
+    }
     /**
      * Save an iamge and all annotion together
      *
@@ -539,125 +913,4 @@ public class PaintPanel extends javax.swing.JPanel {
 //        }
 //        return false;
 //    }
-    // Zoom action
-    /**
-     * Set number of zoom at a time
-     *
-     * @param zoom number of zoom that zoomed at a time
-     */
-    public void setZoom(double zoom) {
-        this.zoom = zoom;
-        if (this.zoom < 0.25) {
-            this.zoom = 0.25;
-        }
-        if (this.zoom > 4.75) {
-            this.zoom = 4.75;
-        }
-    }
-
-    /**
-     * Get zoom
-     *
-     * @return
-     */
-    public double getZoom() {
-        return zoom;
-    }
-
-    /**
-     *
-     * @param center center point of zoomed
-     */
-    public void zoomed(Point center) {
-        Dimension newSize = new Dimension((int) (img.getWidth() * zoom), (int) (img.getHeight() * zoom));
-        if (scrollPane != null) {
-            Dimension currentSize = this.getPreferredSize();
-            double ratio = (double) newSize.getHeight() / (double) currentSize.getHeight();
-
-            Point currentLoc = scrollPane.getViewport().getViewPosition();
-
-            Dimension viewSize = scrollPane.getViewport().getExtentSize();
-            int xOff = center.x - currentLoc.x;
-            int yOff = center.y - currentLoc.y;
-
-            Point newCent = new Point((int) (center.x * ratio), (int) (center.y * ratio));
-
-            int newXLoc = newCent.x - xOff;
-            int newYLoc = newCent.y - yOff;
-            if (newXLoc > newSize.getWidth() - viewSize.getWidth()) {
-                newXLoc = (int) newSize.getWidth() - (int) viewSize.getWidth();
-            }
-            if (newXLoc < 0) {
-                newXLoc = 0;
-            }
-            if (newYLoc > newSize.getHeight() - viewSize.getHeight()) {
-                newYLoc = (int) newSize.getHeight() - (int) viewSize.getHeight();
-            }
-            if (newYLoc < 0) {
-                newYLoc = 0;
-            }
-            Point newLoc = new Point(newXLoc, newYLoc);
-
-            this.setPreferredSize(newSize);
-            this.revalidate();
-            scrollPane.getViewport().setViewPosition(newLoc);
-
-            if (locationPanel != null) {
-                int x = (int) (center.getX() / zoom);
-                int y = (int) (center.getY() / zoom);
-
-                if (x >= 0 && x < img.getWidth() && y >= 0 && y < img.getHeight()) {
-                    locationPanel.updateLocation(new Point(x, y));
-                } else {
-                    locationPanel.updateLocation(null);
-                }
-                locationPanel.repaint();
-            }
-            this.updatePanel();
-        } else {
-            this.setPreferredSize(newSize);
-            this.revalidate();
-            this.updatePanel();
-        }
-    }
-    
-    /**
-     * Check the button fill was selected or not
-     * @return
-     * true - if it was selected
-     * <br>
-     * false - in otherwise 
-     * 
-     */
-    public boolean isFilled() {
-        return filled;
-    }
-
-    /**
-     * Set Filled
-     * @param fill
-     * fill is true when this button selected and false in otherwise
-     */
-    public void setFilled(boolean filled) {
-        this.filled = filled;
-//        properties.setProperty("filled", "" + filled);
-        if (selectedObjects != null) {
-            for (Iterator iterator = selectedObjects.iterator(); iterator.hasNext();) {
-                AnnotationObject paintObject = (AnnotationObject) iterator.next();
-                if (paintObject instanceof AnnotationRectObject) {
-                    ((AnnotationRectObject) paintObject).setFilled(filled);
-                    continue;
-                }
-                if (paintObject instanceof AnnotationOvalObject) {
-                    ((AnnotationOvalObject) paintObject).setFilled(filled);
-                    continue;
-                }
-                if (paintObject instanceof AnnotationQuadArrowObject) {
-                    ((AnnotationQuadArrowObject) paintObject).setFilled(filled);
-                    continue;
-                }
-                this.updatePanel();
-            }
-        }
-    }
 }

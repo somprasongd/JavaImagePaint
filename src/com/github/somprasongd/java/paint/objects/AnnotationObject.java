@@ -6,13 +6,15 @@ import java.awt.geom.Point2D;
 import java.util.Vector;
 
 /**
- * An object used to hold infomation about something to draw on a Graphics2D object. It includes information
- * about the color, location, antialiasing, and alpha. Subclasses get to specify a bunch of methods.  
- * See JImageLineObject and others for a concrete example.
+ * An object used to hold infomation about something to draw on a Graphics2D
+ * object. It includes information about the color, location, antialiasing, and
+ * alpha. Subclasses get to specify a bunch of methods. See JImageLineObject and
+ * others for a concrete example.
  *
- * <p>Copyright (c) 2004 Alistair Dickie. All Rights Reserved.
- * See alistairdickie.com for contact details
- * See licence.txt for licence infomation</p>
+ * <p>
+ * Copyright (c) 2004 Alistair Dickie. All Rights Reserved. See
+ * alistairdickie.com for contact details See licence.txt for licence
+ * infomation</p>
  */
 public abstract class AnnotationObject {
 
@@ -51,12 +53,12 @@ public abstract class AnnotationObject {
         this.alpha = alpha;
     }
 
-    public boolean getPublicView(){
+    public boolean getPublicView() {
         return ispublic_view;
     }
-    
+
     public void setPublicView(boolean ispublic) {
-        this.ispublic_view= ispublic;
+        this.ispublic_view = ispublic;
     }
 
     public Color getColor() {
@@ -103,7 +105,6 @@ public abstract class AnnotationObject {
         this.startDrag = point;
         this.setStartDragLocs();
 
-
     }
 
     public Point2D getStartDragLoc() {
@@ -145,20 +146,6 @@ public abstract class AnnotationObject {
     public abstract Point2D[] getHighlightPoints();
 
     public abstract void updateLocation(Point2D point);
-    
-    public abstract void updateViewUser(Vector user);
-    
-    public abstract void updateEditUser(Vector user);
-    
-    public abstract void updateDeleteUser(Vector user);
-    
-    public abstract String getOwnerUser();
-    
-    public abstract Vector getView_user();
-    
-    public abstract Vector getEdit_user();
-    
-    public abstract Vector getDel_user();
 
     public abstract boolean finished(Point2D point);
 

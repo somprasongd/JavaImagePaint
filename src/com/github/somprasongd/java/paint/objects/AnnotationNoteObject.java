@@ -12,14 +12,14 @@ import java.awt.geom.RoundRectangle2D;
 import java.text.AttributedCharacterIterator;
 import java.text.AttributedString;
 import java.util.Hashtable;
-import java.util.Vector;
 
 /**
  * Draws a Rectangle2D.
  *
- * <p>Copyright (c) 2004 Alistair Dickie. All Rights Reserved.
- * See alistairdickie.com for contact details
- * See licence.txt for licence infomation</p>
+ * <p>
+ * Copyright (c) 2004 Alistair Dickie. All Rights Reserved. See
+ * alistairdickie.com for contact details See licence.txt for licence
+ * infomation</p>
  */
 public class AnnotationNoteObject extends AnnotationObject {
 
@@ -36,13 +36,6 @@ public class AnnotationNoteObject extends AnnotationObject {
     private double arcHeightDrag;
     private String text;
     private AnnotationPaintPanel paintPanel;
-    private String view_user;
-    private String edit_user;
-    private String del_user;
-    private String owner_user;
-    private Vector edit_user_vector = new Vector();
-    private Vector del_user_vector = new Vector();
-    private Vector view_user_vector = new Vector();
     private Font font;
     private Color textColor;
     private Color bgColor;
@@ -58,7 +51,7 @@ public class AnnotationNoteObject extends AnnotationObject {
 
     }
 
-    public AnnotationNoteObject(AnnotationPaintPanel paintPanel, String view_user, String edit_user, String del_user, String owner_user,
+    public AnnotationNoteObject(AnnotationPaintPanel paintPanel,
             Font font, Color textColor, Color bgColor, Color brColor, Point2D locationStart, String text, boolean antialiased,
             Stroke stroke, boolean bgTransparent, double arcWidth, double arcHeight, float alpha) {
 
@@ -76,25 +69,6 @@ public class AnnotationNoteObject extends AnnotationObject {
         this.bgColor = bgColor;
         this.bdColor = brColor;
         this.bgTransparent = bgTransparent;
-        this.view_user = view_user;
-        this.edit_user = edit_user;
-        this.del_user = del_user;
-        this.owner_user = owner_user;
-        if (this.view_user.equals("alluser>")) {
-            view_user_vector.add(this.view_user);
-        } else {
-            setView_user(this.view_user);
-        }
-        if (this.edit_user.equals("alluser>")) {
-            edit_user_vector.add(this.edit_user);
-        } else {
-            setEdit_user(this.edit_user);
-        }
-        if (this.del_user.equals("alluser>")) {
-            del_user_vector.add(this.del_user);
-        } else {
-            setDel_user(this.del_user);
-        }
         this.updateMiddle();
         init();
     }
@@ -158,6 +132,7 @@ public class AnnotationNoteObject extends AnnotationObject {
         this.updateArcPoint();
     }
 
+    @Override
     public void addGraphics(Graphics2D g) {
         g.setStroke(stroke);
         g.setColor(this.getColor());
@@ -180,7 +155,7 @@ public class AnnotationNoteObject extends AnnotationObject {
             height = -height;
 
         }
-//สี
+        //สี
         if (bgTransparent) {
             g.setPaint(new Color(bgColor.getRed(), bgColor.getGreen(), bgColor.getBlue(), 202));
         } else {
@@ -259,6 +234,7 @@ public class AnnotationNoteObject extends AnnotationObject {
         this.updateMiddle();
     }
 
+    @Override
     public void setStartDragLocs() {
         this.locStartDrag = new Point2D.Double(this.locationStart.getX(), this.locationStart.getY());
         this.locEndDrag = new Point2D.Double(this.locationEnd.getX(), this.locationEnd.getY());
@@ -267,41 +243,54 @@ public class AnnotationNoteObject extends AnnotationObject {
         this.arcHeightDrag = arcHeight;
     }
 
+    @Override
     public void updateLocation(Point2D point) {
 
-        if (this.getCurrentPointIndex() == 1) {
-            this.setLocationStart(point);
-            this.updateMiddle();
-        } else if (this.getCurrentPointIndex() == 2) {
-            this.setLocationEnd(point);
-            this.updateMiddle();
-        } else if (this.getCurrentPointIndex() == 3) {
-            this.setLocationEnd(new Point2D.Double(locationEnd.getX(), point.getY()));
-            this.setLocationStart(new Point2D.Double(point.getX(), locationStart.getY()));
-            this.updateMiddle();
-        } else if (this.getCurrentPointIndex() == 4) {
-            this.setLocationEnd(new Point2D.Double(point.getX(), locationEnd.getY()));
-            this.setLocationStart(new Point2D.Double(locationStart.getX(), point.getY()));
-            this.updateMiddle();
-        } else if (this.getCurrentPointIndex() == 5) {
-            this.setLocationStart(new Point2D.Double(locationStart.getX(), point.getY()));
-            this.updateMiddle();
-        } else if (this.getCurrentPointIndex() == 6) {
-            this.setLocationEnd(new Point2D.Double(locationEnd.getX(), point.getY()));
-            this.updateMiddle();
-        } else if (this.getCurrentPointIndex() == 7) {
-            this.setLocationStart(new Point2D.Double(point.getX(), locationStart.getY()));
-            this.updateMiddle();
-        } else if (this.getCurrentPointIndex() == 8) {
-            this.setLocationEnd(new Point2D.Double(point.getX(), locationEnd.getY()));
-            this.updateMiddle();
-        } else if (this.getCurrentPointIndex() == 9) {
-            this.setArcWidths(point);
-        } else if (this.getCurrentPointIndex() == 0) {
-            this.setLocationMiddle(point);
-        } else {
-            this.setLocationEnd(point);
-            this.updateMiddle();
+        switch (this.getCurrentPointIndex()) {
+            case 1:
+                this.setLocationStart(point);
+                this.updateMiddle();
+                break;
+            case 2:
+                this.setLocationEnd(point);
+                this.updateMiddle();
+                break;
+            case 3:
+                this.setLocationEnd(new Point2D.Double(locationEnd.getX(), point.getY()));
+                this.setLocationStart(new Point2D.Double(point.getX(), locationStart.getY()));
+                this.updateMiddle();
+                break;
+            case 4:
+                this.setLocationEnd(new Point2D.Double(point.getX(), locationEnd.getY()));
+                this.setLocationStart(new Point2D.Double(locationStart.getX(), point.getY()));
+                this.updateMiddle();
+                break;
+            case 5:
+                this.setLocationStart(new Point2D.Double(locationStart.getX(), point.getY()));
+                this.updateMiddle();
+                break;
+            case 6:
+                this.setLocationEnd(new Point2D.Double(locationEnd.getX(), point.getY()));
+                this.updateMiddle();
+                break;
+            case 7:
+                this.setLocationStart(new Point2D.Double(point.getX(), locationStart.getY()));
+                this.updateMiddle();
+                break;
+            case 8:
+                this.setLocationEnd(new Point2D.Double(point.getX(), locationEnd.getY()));
+                this.updateMiddle();
+                break;
+            case 9:
+                this.setArcWidths(point);
+                break;
+            case 0:
+                this.setLocationMiddle(point);
+                break;
+            default:
+                this.setLocationEnd(point);
+                this.updateMiddle();
+                break;
         }
     }
 
@@ -353,6 +342,7 @@ public class AnnotationNoteObject extends AnnotationObject {
         return this.strokeWidth;
     }
 
+    @Override
     public Point2D[] getHighlightPoints() {
         Point2D middle = this.getLocation();
         Point2D bottomLeft = new Point2D.Double(locationStart.getX(), locationEnd.getY());
@@ -366,6 +356,7 @@ public class AnnotationNoteObject extends AnnotationObject {
         return points;
     }
 
+    @Override
     public boolean finished(Point2D point) {
         if (this.getCurrentPointIndex() < 0) {
             double dist = point.distance(this.locationStart);
@@ -397,18 +388,11 @@ public class AnnotationNoteObject extends AnnotationObject {
         this.arcHeight = arcHeight;
     }
 
+    @Override
     public double[] getTranslation() {
         return new double[]{0.5, 0.5};
     }
 
-//    public AnnotationObject createCopy(int xOffset, int yOffset) {
-//        AnnotationNoteObject copy = new AnnotationNoteObject(this.paintPanel, this.view_user, this.edit_user, this.del_user, this.owner_user,
-//                this.getColor(), this.getLocationStart(), this.getStroke(), this.isAntialiased(), this.isFilled(), this.getArcWidth(),
-//                this.getArcHeight(), this.getAlpha());
-//        copy.locationEnd = new Point2D.Double(this.locationEnd.getX() + xOffset, this.locationEnd.getY() + yOffset);
-//        copy.locationStart = new Point2D.Double(this.locationStart.getX() + xOffset, this.locationStart.getY() + yOffset);
-//        return copy;
-//    }
     @Override
     public String getInfo() {
         String filename = paintPanel.getCurrentImageFilename();
@@ -423,9 +407,7 @@ public class AnnotationNoteObject extends AnnotationObject {
 
         String getlocatStart = new StringBuilder().append(this.getLocationStart().getX()).append("|").append(this.getLocationStart().getY()).toString();
 
-
-
-        return (new StringBuilder()).append(view_user + "|" + edit_user + "|" + del_user + "|" + owner_user).append("|").
+        return (new StringBuilder()).
                 append(filename).append("|Note|").append(fonts).append("|").append(this.textColor.getRGB()).append("|").
                 append(getlocatStart).append("|").append(this.getText()).append("|").append(this.isAntialiased()).
                 append("|").append(this.getAlpha()).append("|").append(this.bgColor.getRGB()).append("|").append(this.bdColor.getRGB()).
@@ -440,9 +422,8 @@ public class AnnotationNoteObject extends AnnotationObject {
             boolean antia, float alpha, Stroke stroke, boolean bg_Transparent, double width,
             double arcWidth, double arcHeight) {
 
-        AnnotationNoteObject copy = new AnnotationNoteObject(paintPanel, view_user, edit_user, del_user, owner_user,
+        AnnotationNoteObject copy = new AnnotationNoteObject(paintPanel,
                 font, textcolor, bgcolor, brcolor, locStart, text, antia, stroke, bg_Transparent, arcWidth, arcHeight, alpha);
-
 
         copy.locationEnd = new Point2D.Double(xEnd, yEnd);
         copy.locationStart = new Point2D.Double(xStart, yStart);
@@ -453,141 +434,16 @@ public class AnnotationNoteObject extends AnnotationObject {
 
     @Override
     public Font getTextFont() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return null;
     }
 
     @Override
     public String getTextNote() {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public void updateViewUser(Vector user) {
-        view_user_vector = user;
-        if (user.get(0).toString().equals("alluser>")) {
-            view_user = "alluser>";
-        } else {
-            String new_user = "";
-            for (int j = 0; j < user.size(); j++) {
-                new_user += user.get(j).toString();
-            }
-            view_user = new_user;
-            System.out.println("view user : " + view_user);
-        }
-    }
-
-    @Override
-    public void updateEditUser(Vector user) {
-        edit_user_vector = user;
-        if (user.get(0).toString().equals("alluser>")) {
-            edit_user = "alluser>";
-        } else {
-            String new_user = "";
-            for (int j = 0; j < user.size(); j++) {
-                new_user += user.get(j).toString();
-            }
-            edit_user = new_user;
-            System.out.println("edit user : " + edit_user);
-        }
-    }
-
-    @Override
-    public void updateDeleteUser(Vector user) {
-        del_user_vector = user;
-        if (user.get(0).toString().equals("alluser>")) {
-            del_user = "alluser>";
-        } else {
-            String new_user = "";
-            for (int j = 0; j < user.size(); j++) {
-                new_user += user.get(j).toString();
-            }
-            del_user = new_user;
-            System.out.println("del user : " + del_user);
-        }
-    }
-
-    @Override
-    public String getOwnerUser() {
-        return owner_user;
-    }
-
-    public String getViewUser() {
-        return view_user;
-    }
-
-    public String getEditUser() {
-        return edit_user;
-    }
-
-    public String getDeleteUser() {
-        return del_user;
-    }
-
-    private void setDel_user(String del_user) {
-        Vector user = new Vector();
-        int end;
-        int i = 0;
-        int start = 0;
-        while (start != del_user.length()) {
-            end = del_user.indexOf('>', start);
-            if (end >= 0) {
-                user.add(del_user.substring(start, end + 1));
-                start = end + 1;
-                i++;
-            }
-        }
-        del_user_vector = user;
-    }
-
-    @Override
-    public Vector getDel_user() {
-        return del_user_vector;
-    }
-
-    private void setEdit_user(String edit_user) {
-        Vector user = new Vector();
-        int end;
-        int i = 0;
-        int start = 0;
-        while (start != edit_user.length()) {
-            end = edit_user.indexOf('>', start);
-            if (end >= 0) {
-                user.add(edit_user.substring(start, end + 1));
-                start = end + 1;
-                i++;
-            }
-        }
-        edit_user_vector = user;
-    }
-
-    @Override
-    public Vector getEdit_user() {
-        return edit_user_vector;
-    }
-    
-    private void setView_user(String view_user) {
-        Vector user = new Vector();
-        int end;
-        int i = 0;
-        int start = 0;
-        while (start != view_user.length()) {
-            end = view_user.indexOf('>', start);
-            if (end >= 0) {
-                user.add(view_user.substring(start, end + 1));
-                start = end + 1;
-                i++;
-            }
-        }
-        view_user_vector = user;
-    }
-
-    @Override
-    public Vector getView_user() {
-        return view_user_vector;
+        return null;
     }
 
     @Override
     public AnnotationObject createCopy(int xOffset, int yOffset) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return null;
     }
 }

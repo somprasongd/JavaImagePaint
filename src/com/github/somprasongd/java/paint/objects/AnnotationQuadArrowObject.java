@@ -11,11 +11,12 @@ import java.util.Vector;
 
 /**
  * Draws a "QuadArrow".
- * 
  *
- * <p>Copyright (c) 2004 Alistair Dickie. All Rights Reserved.
- * See alistairdickie.com for contact details
- * See licence.txt for licence infomation</p>
+ *
+ * <p>
+ * Copyright (c) 2004 Alistair Dickie. All Rights Reserved. See
+ * alistairdickie.com for contact details See licence.txt for licence
+ * infomation</p>
  */
 public class AnnotationQuadArrowObject extends AnnotationObject {
 
@@ -50,21 +51,14 @@ public class AnnotationQuadArrowObject extends AnnotationObject {
     private double startWidthDrag;
     private boolean filled;
     private AnnotationPaintPanel paintPanel;
-    private String view_user;
-    private String edit_user;
-    private String del_user;
-    private String owner_user;
-    private Vector edit_user_vector = new Vector();
-    private Vector del_user_vector = new Vector();
-    private Vector view_user_vector = new Vector();
 
     public AnnotationQuadArrowObject() {
 
     }
 
-    public AnnotationQuadArrowObject(AnnotationPaintPanel paintPanel, String view_user, String edit_user, String del_user, String owner_user, 
+    public AnnotationQuadArrowObject(AnnotationPaintPanel paintPanel,
             Color color, Point2D locationStart, Stroke stroke, boolean antialiased, boolean filled, float alpha) {
-        
+
         super(color, null, antialiased, alpha);
         this.paintPanel = paintPanel;
         this.locationStart = locationStart;
@@ -72,25 +66,6 @@ public class AnnotationQuadArrowObject extends AnnotationObject {
         this.locationEnd = locationStart;
         this.stroke = stroke;
         this.filled = filled;
-        this.view_user = view_user;
-        this.edit_user = edit_user;
-        this.del_user = del_user;
-        this.owner_user = owner_user;
-        if (this.view_user.equals("alluser>")) {
-            view_user_vector.add(this.view_user);
-        } else {
-            setView_user(this.view_user);
-        }
-        if (this.edit_user.equals("alluser>")) {
-            edit_user_vector.add(this.edit_user);
-        } else {
-            setEdit_user(this.edit_user);
-        }
-        if (this.del_user.equals("alluser>")) {
-            del_user_vector.add(this.del_user);
-        } else {
-            setDel_user(this.del_user);
-        }
         this.init();
     }
 
@@ -204,6 +179,7 @@ public class AnnotationQuadArrowObject extends AnnotationObject {
         arrow.append(right, true);
     }
 
+    @Override
     public void addGraphics(Graphics2D g) {
         g.setStroke(stroke);
         g.setColor(this.getColor());
@@ -249,6 +225,7 @@ public class AnnotationQuadArrowObject extends AnnotationObject {
         this.updateShape();
     }
 
+    @Override
     public void setStartDragLocs() {
         this.locStartDrag = new Point2D.Double(this.locationStart.getX(), this.locationStart.getY());
         this.locEndDrag = new Point2D.Double(this.locationEnd.getX(), this.locationEnd.getY());
@@ -259,33 +236,44 @@ public class AnnotationQuadArrowObject extends AnnotationObject {
         this.startWidthDrag = startWidth;
     }
 
+    @Override
     public void updateLocation(Point2D point) {
-        if (this.getCurrentPointIndex() == 1) {
-            this.setLocationStart(point);
-            this.updateShape();
-        } else if (this.getCurrentPointIndex() == 2) {
-            this.setLocationEnd(point);
-            this.updateShape();
-        } else if (this.getCurrentPointIndex() == 3) {
-            this.setLocationCtrl(point);
-            this.updateShape();
-        } else if (this.getCurrentPointIndex() == 4) {
-            this.updateHeadPoint(point);
-            this.updateShape();
-        } else if (this.getCurrentPointIndex() == 5) {
-            this.updateEndPoint(point);
-            this.updateShape();
-        } else if (this.getCurrentPointIndex() == 6) {
-            this.updateTipPoint(point);
-            this.updateShape();
-        } else if (this.getCurrentPointIndex() == 7) {
-            this.updateStartPoint(point);
-            this.updateShape();
-        } else if (this.getCurrentPointIndex() == 0) {
-            this.setLocationMiddle(point);
-        } else {
-            this.setLocationEnd(point);
-            this.updateTempPoints(point);
+        switch (this.getCurrentPointIndex()) {
+            case 1:
+                this.setLocationStart(point);
+                this.updateShape();
+                break;
+            case 2:
+                this.setLocationEnd(point);
+                this.updateShape();
+                break;
+            case 3:
+                this.setLocationCtrl(point);
+                this.updateShape();
+                break;
+            case 4:
+                this.updateHeadPoint(point);
+                this.updateShape();
+                break;
+            case 5:
+                this.updateEndPoint(point);
+                this.updateShape();
+                break;
+            case 6:
+                this.updateTipPoint(point);
+                this.updateShape();
+                break;
+            case 7:
+                this.updateStartPoint(point);
+                this.updateShape();
+                break;
+            case 0:
+                this.setLocationMiddle(point);
+                break;
+            default:
+                this.setLocationEnd(point);
+                this.updateTempPoints(point);
+                break;
         }
     }
 
@@ -297,6 +285,7 @@ public class AnnotationQuadArrowObject extends AnnotationObject {
         this.stroke = stroke;
     }
 
+    @Override
     public Point2D[] getHighlightPoints() {
         Point2D[] points = new Point2D[]{this.getLocation(),
             locationStart,
@@ -310,6 +299,7 @@ public class AnnotationQuadArrowObject extends AnnotationObject {
         return points;
     }
 
+    @Override
     public boolean finished(Point2D point) {
         if (this.getCurrentPointIndex() < 0) {
             double dist = point.distance(this.locationStart);
@@ -329,13 +319,13 @@ public class AnnotationQuadArrowObject extends AnnotationObject {
         return true;
     }
 
+    @Override
     public double[] getTranslation() {
         return new double[]{0.5, 0.5};
     }
 
     public AnnotationObject createCopy(int xOffset, int yOffset) {
-        AnnotationQuadArrowObject copy = new AnnotationQuadArrowObject(this.paintPanel, this.view_user, this.edit_user, this.del_user, 
-                this.owner_user,this.getColor(), this.getLocationStart(), this.getStroke(), this.isAntialiased(), this.isFilled(), 
+        AnnotationQuadArrowObject copy = new AnnotationQuadArrowObject(this.paintPanel, this.getColor(), this.getLocationStart(), this.getStroke(), this.isAntialiased(), this.isFilled(),
                 this.getAlpha());
         copy.locationEnd = new Point2D.Double(this.locationEnd.getX() + xOffset, this.locationEnd.getY() + yOffset);
         copy.locationStart = new Point2D.Double(this.locationStart.getX() + xOffset, this.locationStart.getY() + yOffset);
@@ -367,18 +357,18 @@ public class AnnotationQuadArrowObject extends AnnotationObject {
 
         String str_double = new StringBuilder().append(headMult).append("|").append(endWidth).append("|").append(tipWidth).append("|").append(startWidth).toString();
 
-        return (new StringBuilder()).append(view_user + "|" + edit_user + "|" + del_user + "|" + owner_user).append("|").
-                append(filename).append("|Arrow|").append(locatStart). append("|").append(locatEnd).append("|").
+        return (new StringBuilder()).
+                append(filename).append("|Arrow|").append(locatStart).append("|").append(locatEnd).append("|").
                 append(this.getColor().getRGB()).append("|").append(getlocatStart).append("|").append(strokes).append("|").
                 append(this.isAntialiased()).append("|").append(this.isFilled()).append("|").append(this.getAlpha()).append("|").
                 append(locatCtrl).append("|").append(str_double).append("|").toString();
     }
 
-    public AnnotationObject loadArrow(AnnotationPaintPanel paintPanel, String view_user, String edit_user, String del_user, String owner_user, 
-            double xStart, double yStart, double xEnd, double yEnd, double xCtrl, double yCtrl, double head, double end, 
-            double tip, double start, Color color, Point2D location, Stroke stroke, boolean antia, boolean fill, float alpha){
-        
-        AnnotationQuadArrowObject copy = new AnnotationQuadArrowObject(paintPanel, view_user, edit_user, del_user, owner_user,
+    public AnnotationObject loadArrow(AnnotationPaintPanel paintPanel, String view_user, String edit_user, String del_user, String owner_user,
+            double xStart, double yStart, double xEnd, double yEnd, double xCtrl, double yCtrl, double head, double end,
+            double tip, double start, Color color, Point2D location, Stroke stroke, boolean antia, boolean fill, float alpha) {
+
+        AnnotationQuadArrowObject copy = new AnnotationQuadArrowObject(paintPanel,
                 color, location, stroke, antia, fill, alpha);
         copy.locationEnd = new Point2D.Double(xEnd, yEnd);
         copy.locationStart = new Point2D.Double(xStart, yStart);
@@ -465,125 +455,11 @@ public class AnnotationQuadArrowObject extends AnnotationObject {
 
     @Override
     public Font getTextFont() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return null;
     }
 
     @Override
     public String getTextNote() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return null;
     }
-
-    @Override
-    public void updateViewUser(Vector user) {
-        view_user_vector = user;
-        if (user.get(0).toString().equals("alluser>")) {
-            view_user = "alluser>";
-        } else {
-            String new_user = "";
-            for (int j = 0; j < user.size(); j++) {
-                new_user += user.get(j).toString();
-            }
-            view_user = new_user;
-            System.out.println("view user : " + view_user);
-        }
-    }
-
-    @Override
-    public void updateEditUser(Vector user) {
-        edit_user_vector = user;
-        if (user.get(0).toString().equals("alluser>")) {
-            edit_user = "alluser>";
-        } else {
-            String new_user = "";
-            for (int j = 0; j < user.size(); j++) {
-                new_user += user.get(j).toString();
-            }
-            edit_user = new_user;
-            System.out.println("edit user : " + edit_user);
-        }
-    }
-
-    @Override
-    public void updateDeleteUser(Vector user) {
-        del_user_vector = user;
-        if (user.get(0).toString().equals("alluser>")) {
-            del_user = "alluser>";
-        } else {
-            String new_user = "";
-            for (int j = 0; j < user.size(); j++) {
-                new_user += user.get(j).toString();
-            }
-            del_user = new_user;
-            System.out.println("del user : " + del_user);
-        }
-    }
-
-    @Override
-    public String getOwnerUser() {
-        return owner_user;
-    }
-
-       private void setDel_user(String del_user) {
-        Vector user = new Vector();
-        int end;
-        int i = 0;
-        int start = 0;
-        while (start != del_user.length()) {
-            end = del_user.indexOf('>', start);
-            if (end >= 0) {
-                user.add(del_user.substring(start, end + 1));
-                start = end + 1;
-                i++;
-            }
-        }
-        del_user_vector = user;
-    }
-
-    @Override
-    public Vector getDel_user() {
-        return del_user_vector;
-    }
-
-    private void setEdit_user(String edit_user) {
-        Vector user = new Vector();
-        int end;
-        int i = 0;
-        int start = 0;
-        while (start != edit_user.length()) {
-            end = edit_user.indexOf('>', start);
-            if (end >= 0) {
-                user.add(edit_user.substring(start, end + 1));
-                start = end + 1;
-                i++;
-            }
-        }
-        edit_user_vector = user;
-    }
-
-    @Override
-    public Vector getEdit_user() {
-        return edit_user_vector;
-    }
-    
-    private void setView_user(String view_user) {
-        Vector user = new Vector();
-        int end;
-        int i = 0;
-        int start = 0;
-        while (start != view_user.length()) {
-            end = view_user.indexOf('>', start);
-            if (end >= 0) {
-                user.add(view_user.substring(start, end + 1));
-                start = end + 1;
-                i++;
-            }
-        }
-        view_user_vector = user;
-    }
-
-    @Override
-    public Vector getView_user() {
-        return view_user_vector;
-    }
-
 }

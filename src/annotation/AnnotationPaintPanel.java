@@ -3,16 +3,13 @@ package annotation;
 import com.github.somprasongd.java.paint.components.LocationPanel;
 import com.github.somprasongd.java.paint.objects.AnnotationObject;
 import com.github.somprasongd.java.paint.objects.AnnotationTextObject;
-import com.github.somprasongd.java.paint.objects.AnnotationStampImageObject;
 import com.github.somprasongd.java.paint.objects.AnnotationRectObject;
 import com.github.somprasongd.java.paint.objects.AnnotationQuadArrowObject;
 import com.github.somprasongd.java.paint.objects.AnnotationOvalObject;
-import com.github.somprasongd.java.paint.objects.AnnotationStampObject;
 import com.github.somprasongd.java.paint.objects.AnnotationLineObject;
 import com.github.somprasongd.java.paint.objects.AnnotationNoteObject;
 import com.github.somprasongd.java.paint.utils.BufferedImageTool;
 import com.github.somprasongd.java.paint.utils.ImageIOFileFilter;
-import com.github.somprasongd.java.paint.utils.TransferableImage;
 import javax.imageio.ImageIO;
 import javax.imageio.ImageWriter;
 import javax.imageio.stream.FileImageOutputStream;
@@ -20,9 +17,6 @@ import javax.imageio.stream.ImageOutputStream;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.datatransfer.Clipboard;
-import java.awt.datatransfer.DataFlavor;
-import java.awt.datatransfer.Transferable;
-import java.awt.datatransfer.UnsupportedFlavorException;
 import java.awt.event.*;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
@@ -257,84 +251,6 @@ public class AnnotationPaintPanel extends JPanel implements MouseListener, Mouse
     }
 
     /**
-     * Add a stamp object on the screen
-     *
-     * @param obj is a stamp object
-     */
-    public void addStampObjects(AnnotationStampObject obj) {
-        //tempObjects.add(obj);
-        selectedObjects.add(obj);
-        paintObjects.add(obj);
-        autoSaveAnnotaion();
-        this.setCurrentMode(AnnotationPaintPanel.MODE_NONE);
-
-    }
-
-    /**
-     * Add stamp image object into the screen
-     *
-     * @param url_anno is iamge url_anno
-     */
-    public void addStampImage(URL url) {
-        BufferedImage image = loadStampImage(url);
-        BufferedImage save = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_INT_ARGB);
-        Graphics2D g = (Graphics2D) save.getGraphics();
-        g.drawImage(image, 0, 0, null);
-        g.drawImage(this.getObjectsImage(paintObjects), 0, 0, null);
-
-        TransferableImage trans = new TransferableImage(save);
-
-        clipboard.setContents(trans, null);
-        String image_Path = url.toString();
-        createStampImage(new Point2D.Double(30.0d, 30.0d), image_Path);
-    }
-
-    /**
-     * Load an image url_anno and returns it as a BufferedImage.
-     *
-     * @param image_url
-     * @return
-     */
-    private BufferedImage loadStampImage(URL image_url) {
-        try {
-            BufferedImage image = ImageIO.read(image_url);
-            if (image == null || (image.getWidth() < 0)) // probably bad url_stamp_images format
-            {
-                return null;
-            }
-            return image;
-        } catch (IOException e) {
-            return null;
-        }
-    }
-
-    /**
-     * Load stamp image
-     *
-     * @param clickPoint
-     * @param image_Path
-     */
-    public void createStampImage(Point2D clickPoint, String image_Path) {
-        if (clipboard != null) {
-            Transferable trans = clipboard.getContents(this);
-            if (trans != null && trans.isDataFlavorSupported(DataFlavor.imageFlavor)) {
-
-                try {
-                    Image clipImage = (Image) trans.getTransferData(DataFlavor.imageFlavor);
-                    paintObjects.add(new AnnotationStampImageObject(this, view_user, edit_user, del_user, str_userid + ">", clipImage, clickPoint, alpha, image_Path, 0, 0));
-                    this.repaint();
-                } catch (UnsupportedFlavorException e1) {
-                    e1.printStackTrace();
-                } catch (IOException e1) {
-                    e1.printStackTrace();
-                }
-            }
-        }
-        this.setCurrentMode(AnnotationPaintPanel.MODE_NONE);
-        autoSaveAnnotaion();
-    }
-
-    /**
      * Add note object to the screen
      */
     public void addNoteObjects(AnnotationNoteObject note) {
@@ -409,18 +325,7 @@ public class AnnotationPaintPanel extends JPanel implements MouseListener, Mouse
         if (selectedObjects != null) {
             for (Iterator iterator = selectedObjects.iterator(); iterator.hasNext();) {
                 AnnotationObject paintObject = (AnnotationObject) iterator.next();
-                //  ตรวจสอบดูก่อนว่าชิ้นที่เลือกเอาไว้นั้น ผู้ใช้คนนี้มีสิทธิ์หรือไม่
-                Vector edit_users = new Vector();
-                edit_users = paintObject.getEdit_user();
-                if (edit_users.get(0).toString().equals("alluser>")) {
-                    paintObject.setAlpha(this.alpha);
-                } else {
-                    for (int j = 0; j < edit_users.size(); j++) {
-                        if (edit_users.get(j).toString().equals(str_userid + ">")) {
-                            paintObject.setAlpha(this.alpha);
-                        }
-                    }
-                }
+                paintObject.setAlpha(this.alpha);
                 autoSaveAnnotaion();
                 this.updatePanel();
             }
@@ -448,60 +353,16 @@ public class AnnotationPaintPanel extends JPanel implements MouseListener, Mouse
             for (Iterator iterator = selectedObjects.iterator(); iterator.hasNext();) {
                 AnnotationObject paintObject = (AnnotationObject) iterator.next();
                 if (paintObject instanceof AnnotationRectObject) {
-                    //  ตรวจสอบดูก่อนว่าชิ้นที่เลือกเอาไว้นั้น ผู้ใช้คนนี้มีสิทธิ์หรือไม่
-                    Vector edit_users = new Vector();
-                    edit_users = paintObject.getEdit_user();
-                    if (edit_users.get(0).toString().equals("alluser>")) {
-                        ((AnnotationRectObject) paintObject).setStroke(stroke);
-                    } else {
-                        for (int j = 0; j < edit_users.size(); j++) {
-                            if (edit_users.get(j).toString().equals(str_userid + ">")) {
-                                ((AnnotationRectObject) paintObject).setStroke(stroke);
-                            }
-                        }
-                    }
+                    ((AnnotationRectObject) paintObject).setStroke(stroke);
                 }
                 if (paintObject instanceof AnnotationOvalObject) {
-                    //  ตรวจสอบดูก่อนว่าชิ้นที่เลือกเอาไว้นั้น ผู้ใช้คนนี้มีสิทธิ์หรือไม่
-                    Vector edit_users = new Vector();
-                    edit_users = paintObject.getEdit_user();
-                    if (edit_users.get(0).toString().equals("alluser>")) {
-                        ((AnnotationOvalObject) paintObject).setStroke(stroke);
-                    } else {
-                        for (int j = 0; j < edit_users.size(); j++) {
-                            if (edit_users.get(j).toString().equals(str_userid + ">")) {
-                                ((AnnotationOvalObject) paintObject).setStroke(stroke);
-                            }
-                        }
-                    }
+                    ((AnnotationOvalObject) paintObject).setStroke(stroke);
                 }
                 if (paintObject instanceof AnnotationLineObject) {
-                    //  ตรวจสอบดูก่อนว่าชิ้นที่เลือกเอาไว้นั้น ผู้ใช้คนนี้มีสิทธิ์หรือไม่
-                    Vector edit_users = new Vector();
-                    edit_users = paintObject.getEdit_user();
-                    if (edit_users.get(0).toString().equals("alluser>")) {
-                        ((AnnotationLineObject) paintObject).setStroke(stroke);
-                    } else {
-                        for (int j = 0; j < edit_users.size(); j++) {
-                            if (edit_users.get(j).toString().equals(str_userid + ">")) {
-                                ((AnnotationLineObject) paintObject).setStroke(stroke);
-                            }
-                        }
-                    }
+                    ((AnnotationLineObject) paintObject).setStroke(stroke);
                 }
                 if (paintObject instanceof AnnotationQuadArrowObject) {
-                    //  ตรวจสอบดูก่อนว่าชิ้นที่เลือกเอาไว้นั้น ผู้ใช้คนนี้มีสิทธิ์หรือไม่
-                    Vector edit_users = new Vector();
-                    edit_users = paintObject.getEdit_user();
-                    if (edit_users.get(0).toString().equals("alluser>")) {
-                        ((AnnotationQuadArrowObject) paintObject).setStroke(stroke);
-                    } else {
-                        for (int j = 0; j < edit_users.size(); j++) {
-                            if (edit_users.get(j).toString().equals(str_userid + ">")) {
-                                ((AnnotationQuadArrowObject) paintObject).setStroke(stroke);
-                            }
-                        }
-                    }
+                    ((AnnotationQuadArrowObject) paintObject).setStroke(stroke);
                 }
                 autoSaveAnnotaion();
                 this.updatePanel();
@@ -528,18 +389,7 @@ public class AnnotationPaintPanel extends JPanel implements MouseListener, Mouse
             for (Iterator iterator = selectedObjects.iterator(); iterator.hasNext();) {
                 AnnotationObject paintObject = (AnnotationObject) iterator.next();
                 if (paintObject instanceof AnnotationTextObject) {
-                    //  ตรวจสอบดูก่อนว่าชิ้นที่เลือกเอาไว้นั้น ผู้ใช้คนนี้มีสิทธิ์หรือไม่
-                    Vector edit_users = new Vector();
-                    edit_users = paintObject.getEdit_user();
-                    if (edit_users.get(0).toString().equals("alluser>")) {
-                        ((AnnotationTextObject) paintObject).setFont(font);
-                    } else {
-                        for (int j = 0; j < edit_users.size(); j++) {
-                            if (edit_users.get(j).toString().equals(str_userid + ">")) {
-                                ((AnnotationTextObject) paintObject).setFont(font);
-                            }
-                        }
-                    }
+                    ((AnnotationTextObject) paintObject).setFont(font);
                     autoSaveAnnotaion();
                     this.updatePanel();
                 }
@@ -567,17 +417,23 @@ public class AnnotationPaintPanel extends JPanel implements MouseListener, Mouse
         this.firePropertyChange("mode", new Integer(oldMode), new Integer(currentMode));
 
         selectedObjects = new ArrayList();
-        if (currentMode == AnnotationPaintPanel.MODE_LINE
-                || currentMode == AnnotationPaintPanel.MODE_OVAL
-                || currentMode == AnnotationPaintPanel.MODE_RECT) {
-            this.setCursor(new Cursor(Cursor.CROSSHAIR_CURSOR));
-        } else if (currentMode == AnnotationPaintPanel.MODE_TEXT || currentMode == AnnotationPaintPanel.MODE_NOTE) {
-            this.setCursor(new Cursor(Cursor.TEXT_CURSOR));
-        } else if (currentMode == AnnotationPaintPanel.MODE_SELECT
-                || currentMode == AnnotationPaintPanel.MODE_QUADARROW) {
-            this.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
-        } else {
-            this.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+        switch (currentMode) {
+            case AnnotationPaintPanel.MODE_LINE:
+            case AnnotationPaintPanel.MODE_OVAL:
+            case AnnotationPaintPanel.MODE_RECT:
+                this.setCursor(new Cursor(Cursor.CROSSHAIR_CURSOR));
+                break;
+            case AnnotationPaintPanel.MODE_TEXT:
+            case AnnotationPaintPanel.MODE_NOTE:
+                this.setCursor(new Cursor(Cursor.TEXT_CURSOR));
+                break;
+            case AnnotationPaintPanel.MODE_SELECT:
+            case AnnotationPaintPanel.MODE_QUADARROW:
+                this.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+                break;
+            default:
+                this.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+                break;
         }
         //autoSaveAnnotaion();System.out.println("current");
         this.updatePanel();
@@ -625,18 +481,7 @@ public class AnnotationPaintPanel extends JPanel implements MouseListener, Mouse
         properties.setProperty("antialiased", "" + antialiased);
         for (Iterator iterator = selectedObjects.iterator(); iterator.hasNext();) {
             AnnotationObject paintObject = (AnnotationObject) iterator.next();
-            //  ตรวจสอบดูก่อนว่าชิ้นที่เลือกเอาไว้นั้น ผู้ใช้คนนี้มีสิทธิ์หรือไม่
-            Vector edit_users = new Vector();
-            edit_users = paintObject.getEdit_user();
-            if (edit_users.get(0).toString().equals("alluser>")) {
-                paintObject.setAntialiased(antialiased);
-            } else {
-                for (int j = 0; j < edit_users.size(); j++) {
-                    if (edit_users.get(j).toString().equals(str_userid + ">")) {
-                        paintObject.setAntialiased(antialiased);
-                    }
-                }
-            }
+            paintObject.setAntialiased(antialiased);
             autoSaveAnnotaion();
             this.updatePanel();
         }
@@ -666,46 +511,13 @@ public class AnnotationPaintPanel extends JPanel implements MouseListener, Mouse
             for (Iterator iterator = selectedObjects.iterator(); iterator.hasNext();) {
                 AnnotationObject paintObject = (AnnotationObject) iterator.next();
                 if (paintObject instanceof AnnotationRectObject) {
-                    //  ตรวจสอบดูก่อนว่าชิ้นที่เลือกเอาไว้นั้น ผู้ใช้คนนี้มีสิทธิ์หรือไม่
-                    Vector edit_users = new Vector();
-                    edit_users = paintObject.getEdit_user();
-                    if (edit_users.get(0).toString().equals("alluser>")) {
-                        ((AnnotationRectObject) paintObject).setFilled(filled);
-                    } else {
-                        for (int j = 0; j < edit_users.size(); j++) {
-                            if (edit_users.get(j).toString().equals(str_userid + ">")) {
-                                ((AnnotationRectObject) paintObject).setFilled(filled);
-                            }
-                        }
-                    }
+                    ((AnnotationRectObject) paintObject).setFilled(filled);
                 }
                 if (paintObject instanceof AnnotationOvalObject) {
-                    //  ตรวจสอบดูก่อนว่าชิ้นที่เลือกเอาไว้นั้น ผู้ใช้คนนี้มีสิทธิ์หรือไม่
-                    Vector edit_users = new Vector();
-                    edit_users = paintObject.getEdit_user();
-                    if (edit_users.get(0).toString().equals("alluser>")) {
-                        ((AnnotationOvalObject) paintObject).setFilled(filled);
-                    } else {
-                        for (int j = 0; j < edit_users.size(); j++) {
-                            if (edit_users.get(j).toString().equals(str_userid + ">")) {
-                                ((AnnotationOvalObject) paintObject).setFilled(filled);
-                            }
-                        }
-                    }
+                    ((AnnotationOvalObject) paintObject).setFilled(filled);
                 }
                 if (paintObject instanceof AnnotationQuadArrowObject) {
-                    //  ตรวจสอบดูก่อนว่าชิ้นที่เลือกเอาไว้นั้น ผู้ใช้คนนี้มีสิทธิ์หรือไม่
-                    Vector edit_users = new Vector();
-                    edit_users = paintObject.getEdit_user();
-                    if (edit_users.get(0).toString().equals("alluser>")) {
-                        ((AnnotationQuadArrowObject) paintObject).setFilled(filled);
-                    } else {
-                        for (int j = 0; j < edit_users.size(); j++) {
-                            if (edit_users.get(j).toString().equals(str_userid + ">")) {
-                                ((AnnotationQuadArrowObject) paintObject).setFilled(filled);
-                            }
-                        }
-                    }
+                    ((AnnotationQuadArrowObject) paintObject).setFilled(filled);
                 }
                 autoSaveAnnotaion();
                 this.updatePanel();
@@ -733,18 +545,7 @@ public class AnnotationPaintPanel extends JPanel implements MouseListener, Mouse
         properties.setProperty("drawcolor", "" + drawColor.getRGB());
         for (Iterator iterator = selectedObjects.iterator(); iterator.hasNext();) {
             AnnotationObject paintObject = (AnnotationObject) iterator.next();
-            //  ตรวจสอบดูก่อนว่าชิ้นที่เลือกเอาไว้นั้น ผู้ใช้คนนี้มีสิทธิ์หรือไม่
-            Vector edit_users = new Vector();
-            edit_users = paintObject.getEdit_user();
-            if (edit_users.get(0).toString().equals("alluser>")) {
-                paintObject.setColor(drawColor);
-            } else {
-                for (int j = 0; j < edit_users.size(); j++) {
-                    if (edit_users.get(j).toString().equals(str_userid + ">")) {
-                        paintObject.setColor(drawColor);
-                    }
-                }
-            }
+            paintObject.setColor(drawColor);
             autoSaveAnnotaion();
             this.updatePanel();
         }
@@ -770,64 +571,11 @@ public class AnnotationPaintPanel extends JPanel implements MouseListener, Mouse
         for (Iterator iterator = selectedObjects.iterator(); iterator.hasNext();) {
             AnnotationObject paintObject = (AnnotationObject) iterator.next();
             if (paintObject instanceof AnnotationTextObject) {
-                //  ตรวจสอบดูก่อนว่าชิ้นที่เลือกเอาไว้นั้น ผู้ใช้คนนี้มีสิทธิ์หรือไม่
-                Vector edit_users = new Vector();
-                edit_users = paintObject.getEdit_user();
-                if (edit_users.get(0).toString().equals("alluser>")) {
-                    paintObject.setColor(textColor);
-                } else {
-                    for (int j = 0; j < edit_users.size(); j++) {
-                        if (edit_users.get(j).toString().equals(str_userid + ">")) {
-                            paintObject.setColor(textColor);
-                        }
-                    }
-                }
+                paintObject.setColor(textColor);
             }
             autoSaveAnnotaion();
             this.updatePanel();
         }
-    }
-
-    public void setViewUser(Vector user) {
-        //this.ispublic_view = ispublic;
-        for (Iterator iterator = selectedObjects.iterator(); iterator.hasNext();) {
-            AnnotationObject paintObject = (AnnotationObject) iterator.next();
-            paintObject.updateViewUser(user);
-            autoSaveAnnotaion();
-            this.updatePanel();
-        }
-    }
-
-    public void setEditUser(Vector user) {
-        //this.ispublic_view = ispublic;
-        for (Iterator iterator = selectedObjects.iterator(); iterator.hasNext();) {
-            AnnotationObject paintObject = (AnnotationObject) iterator.next();
-            paintObject.updateEditUser(user);
-            autoSaveAnnotaion();
-            this.updatePanel();
-        }
-    }
-
-    public void setDeleteUser(Vector user) {
-        //this.ispublic_view = ispublic;
-        for (Iterator iterator = selectedObjects.iterator(); iterator.hasNext();) {
-            AnnotationObject paintObject = (AnnotationObject) iterator.next();
-            paintObject.updateDeleteUser(user);
-            autoSaveAnnotaion();
-            this.updatePanel();
-        }
-    }
-
-    public boolean getOwnerUser() {
-
-        for (Iterator iterator = selectedObjects.iterator(); iterator.hasNext();) {
-            AnnotationObject paintObject = (AnnotationObject) iterator.next();
-            String owner = paintObject.getOwnerUser();
-            if (owner.equals(str_userid)) {
-                return true;
-            }
-        }
-        return false;
     }
 
     /**
@@ -1294,17 +1042,7 @@ public class AnnotationPaintPanel extends JPanel implements MouseListener, Mouse
                         Font font;
                         String text;
                         if (chkfilename.equals(this.getCurrentImageFilename())) {
-                            if (nameObj.equals("StampImage")) {
-                                image_path = arrStr[6];
-                                p2d = new Point2D.Double(Double.parseDouble(arrStr[7]), Double.parseDouble(arrStr[8]));
-                                alphas = Float.parseFloat(arrStr[9]);
-                                width = Double.parseDouble(arrStr[10]);
-                                hieght = Double.parseDouble(arrStr[11]);
-
-                                AnnotationStampImageObject copyImage = new AnnotationStampImageObject();
-                                AnnotationObject copy = copyImage.loadImage(this, view_users, edit_users, del_users, owner_user, image_path, p2d, alphas, width, hieght);
-                                toCopy.add(copy);
-                            } else if (nameObj.equals("Text") || nameObj.equals("Note") || nameObj.equals("StampText")) {
+                            if (nameObj.equals("Text") || nameObj.equals("Note") || nameObj.equals("StampText")) {
                                 font = new Font(arrStr[6], Integer.parseInt(arrStr[7]), Integer.parseInt(arrStr[8]));
                                 color = new Color(Integer.parseInt(arrStr[9]));
                                 p2d = new Point2D.Double(Double.parseDouble(arrStr[10]), Double.parseDouble(arrStr[11]));
@@ -1333,17 +1071,6 @@ public class AnnotationPaintPanel extends JPanel implements MouseListener, Mouse
                                     AnnotationObject copy = copyNote.loadNote(this, view_users, edit_users, del_users, owner_user,
                                             xStart, yStart, xEnd, yEnd, p2d, font, color, text, bg_Color, br_Color, antia, alphas,
                                             strokes, bg_Transparent, strokeWidth, arcWidths, arcHeights);
-                                    toCopy.add(copy);
-                                } else {
-                                    bg_Color = new Color(Integer.parseInt(arrStr[15]));
-                                    br_Color = new Color(Integer.parseInt(arrStr[16]));
-                                    strokes = new BasicStroke(Float.parseFloat(arrStr[17]));
-                                    bg_Transparent = Boolean.valueOf(arrStr[18]);
-                                    hasBorder = Boolean.valueOf(arrStr[19]);
-                                    noBG = Boolean.valueOf(arrStr[20]);
-
-                                    AnnotationStampObject sTextNote = new AnnotationStampObject();
-                                    AnnotationObject copy = sTextNote.loadSText(this, view_users, edit_users, del_users, owner_user, font, color, bg_Color, br_Color, p2d, text, antia, alphas, strokes, bg_Transparent, hasBorder, noBG);
                                     toCopy.add(copy);
                                 }
                             } else {
@@ -1585,7 +1312,6 @@ public class AnnotationPaintPanel extends JPanel implements MouseListener, Mouse
     }
     }
      */
-
     /**
      * Save all annotation on the screen into temp url
      *
@@ -1717,26 +1443,10 @@ public class AnnotationPaintPanel extends JPanel implements MouseListener, Mouse
      * Delete selected object
      */
     public void deleteSelected() {
-        ArrayList toDelete = new ArrayList();
         for (Iterator iterator = selectedObjects.iterator(); iterator.hasNext();) {
             AnnotationObject paintObject = (AnnotationObject) iterator.next();
-            //  ตรวจสอบดูก่อนว่าชิ้นที่เลือกเอาไว้นั้น ผู้ใช้คนนี้มีสิทธิ์มนการลบหรือไม่
-            Vector delete_user = new Vector();
-            delete_user = paintObject.getDel_user();
-            if (delete_user.get(0).toString().equals("alluser>")) {
-                toDelete.add(paintObject);
-            } else {
-                for (int j = 0; j < delete_user.size(); j++) {
-                    if (delete_user.get(j).toString().equals(str_userid + ">")) {
-                        toDelete.add(paintObject);
-                    }
-                }
-            }
-        }
-        for (Iterator iterator = toDelete.iterator(); iterator.hasNext();) {
-            AnnotationObject object = (AnnotationObject) iterator.next();
-            paintObjects.remove(object);
-            selectedObjects.remove(object);
+            paintObjects.remove(paintObject);
+            selectedObjects.remove(paintObject);
         }
         autoSaveAnnotaion();
         this.updatePanel();
@@ -1772,15 +1482,6 @@ public class AnnotationPaintPanel extends JPanel implements MouseListener, Mouse
         selectedObjects.remove(noteObject);
         autoSaveAnnotaion();
         noteObject.setSelected(false);
-    }
-
-    public void textFinished(AnnotationStampObject stampTextObject) {
-        if (stampTextObject.getText().trim().length() <= 0) {
-            paintObjects.remove(stampTextObject);
-        }
-        selectedObjects.remove(stampTextObject);
-        autoSaveAnnotaion();
-        stampTextObject.setSelected(false);
     }
 
     public void keyTyped(KeyEvent e) {
@@ -1864,128 +1565,140 @@ public class AnnotationPaintPanel extends JPanel implements MouseListener, Mouse
             this.preCursor = this.getCursor();
             this.setCursor(new Cursor(Cursor.HAND_CURSOR));
         } else if ((e.getModifiersEx() & MouseEvent.BUTTON1_DOWN_MASK) == MouseEvent.BUTTON1_DOWN_MASK) {
-            if (currentMode == AnnotationPaintPanel.MODE_FLOOD) {
-                int rgb = img.getRGB((int) (e.getPoint().x / zoom), (int) (e.getPoint().y / zoom));
-                this.updatePanel();
-            } else if (currentMode == AnnotationPaintPanel.MODE_OVAL) {
-                tempObjects.add(new AnnotationOvalObject(this, view_user, edit_user, del_user, str_userid + ">", this.drawColor, new Point((int) (e.getPoint().x / zoom), (int) (e.getPoint().y / zoom)), this.getStroke(), antialiased, filled, alpha));
-            } else if (currentMode == AnnotationPaintPanel.MODE_RECT) {
-                tempObjects.add(new AnnotationRectObject(this, view_user, edit_user, del_user, str_userid + ">", this.drawColor, new Point((int) (e.getPoint().x / zoom), (int) (e.getPoint().y / zoom)), this.getStroke(), antialiased, filled, arcWidth, arcHeight, alpha));
-            } else if (currentMode == AnnotationPaintPanel.MODE_LINE) {
-                tempObjects.add(new AnnotationLineObject(this, view_user, edit_user, del_user, str_userid + ">", this.drawColor, new Point((int) (e.getPoint().x / zoom), (int) (e.getPoint().y / zoom)), this.getStroke(), antialiased, alpha));
-            } else if (currentMode == AnnotationPaintPanel.MODE_QUADARROW) {
-                tempObjects.add(new AnnotationQuadArrowObject(this, view_user, edit_user, del_user, str_userid + ">", this.drawColor, new Point((int) (e.getPoint().x / zoom), (int) (e.getPoint().y / zoom)), this.getStroke(), antialiased, filled, alpha));
-            } else if (currentMode == AnnotationPaintPanel.MODE_TEXT) {
-                AnnotationTextObject text = new AnnotationTextObject(this, view_user, edit_user, del_user, str_userid + ">", this.getFont(), this.textColor, new Point((int) (e.getPoint().x / zoom), (int) (e.getPoint().y / zoom)), " ", antialiased);
-                text.setPanel(this);
-                tempObjects.add(text);
-                this.setCurrentMode(AnnotationPaintPanel.MODE_SELECT);
-                selectedObjects.add(text);
-            } else if (currentMode == AnnotationPaintPanel.MODE_NOTE) {
-                Point2D locationStart = new Point((int) (e.getPoint().x / zoom), (int) (e.getPoint().y / zoom));
-                new AnnotationNoteDialog(this, locationStart, view_user, edit_user, del_user, str_userid + ">", antialiased);
-            } else if (currentMode == AnnotationPaintPanel.MODE_SELECT) {
-                double closestDist = Double.MAX_VALUE;
-                if (selectedObjects.size() == 1) {
-                    AnnotationObject selectedObject = (AnnotationObject) selectedObjects.get(0);
-                    selectedObject.setCurrentPointIndex(-1);
-                    Point2D[] points = selectedObject.getHighlightPoints();
-                    for (int i = 0; i < points.length; i++) {
-                        Point2D point = points[i];
-                        double dist = point.distance(new Point2D.Double(e.getPoint().getX() / zoom, e.getPoint().getY() / zoom));
-                        if (dist < closestDist) {
-                            selectedObject.setCurrentPointIndex(i);
-                            closestDist = dist;
-                        }
-                    }
-                    if (closestDist < 5.0) {
-
-                        paintObjects.remove(selectedObject);
-                        tempObjects.add(selectedObject);
-                    } else {
+            switch (currentMode) {
+                case AnnotationPaintPanel.MODE_FLOOD:
+                    int rgb = img.getRGB((int) (e.getPoint().x / zoom), (int) (e.getPoint().y / zoom));
+                    this.updatePanel();
+                    break;
+                case AnnotationPaintPanel.MODE_OVAL:
+                    tempObjects.add(new AnnotationOvalObject(this, this.drawColor, new Point((int) (e.getPoint().x / zoom), (int) (e.getPoint().y / zoom)), this.getStroke(), antialiased, filled, alpha));
+                    break;
+                case AnnotationPaintPanel.MODE_RECT:
+                    tempObjects.add(new AnnotationRectObject(this, this.drawColor, new Point((int) (e.getPoint().x / zoom), (int) (e.getPoint().y / zoom)), this.getStroke(), antialiased, filled, arcWidth, arcHeight, alpha));
+                    break;
+                case AnnotationPaintPanel.MODE_LINE:
+                    tempObjects.add(new AnnotationLineObject(this, this.drawColor, new Point((int) (e.getPoint().x / zoom), (int) (e.getPoint().y / zoom)), this.getStroke(), antialiased, alpha));
+                    break;
+                case AnnotationPaintPanel.MODE_QUADARROW:
+                    tempObjects.add(new AnnotationQuadArrowObject(this, this.drawColor, new Point((int) (e.getPoint().x / zoom), (int) (e.getPoint().y / zoom)), this.getStroke(), antialiased, filled, alpha));
+                    break;
+                case AnnotationPaintPanel.MODE_TEXT:
+                    AnnotationTextObject text = new AnnotationTextObject(this, this.getFont(), this.textColor, new Point((int) (e.getPoint().x / zoom), (int) (e.getPoint().y / zoom)), " ", antialiased);
+                    text.setPanel(this);
+                    tempObjects.add(text);
+                    this.setCurrentMode(AnnotationPaintPanel.MODE_SELECT);
+                    selectedObjects.add(text);
+                    break;
+                case AnnotationPaintPanel.MODE_NOTE:
+                    Point2D locationStart = new Point((int) (e.getPoint().x / zoom), (int) (e.getPoint().y / zoom));
+                    new AnnotationNoteDialog(this, locationStart, this.antialiased);
+                    break;
+                case AnnotationPaintPanel.MODE_SELECT:
+                    double closestDist = Double.MAX_VALUE;
+                    if (selectedObjects.size() == 1) {
+                        AnnotationObject selectedObject = (AnnotationObject) selectedObjects.get(0);
                         selectedObject.setCurrentPointIndex(-1);
-                    }
-
-                } else {
-
-                    for (Iterator iterator = selectedObjects.iterator(); iterator.hasNext();) {
-                        AnnotationObject paintObject = (AnnotationObject) iterator.next();
-                        paintObject.setCurrentPointIndex(-1);
-                        Point2D[] points = paintObject.getHighlightPoints();
+                        Point2D[] points = selectedObject.getHighlightPoints();
                         for (int i = 0; i < points.length; i++) {
                             Point2D point = points[i];
                             double dist = point.distance(new Point2D.Double(e.getPoint().getX() / zoom, e.getPoint().getY() / zoom));
                             if (dist < closestDist) {
+                                selectedObject.setCurrentPointIndex(i);
                                 closestDist = dist;
                             }
                         }
-                    }
+                        if (closestDist < 5.0) {
 
-                    if (closestDist < 5.0) {
+                            paintObjects.remove(selectedObject);
+                            tempObjects.add(selectedObject);
+                        } else {
+                            selectedObject.setCurrentPointIndex(-1);
+                        }
+
+                    } else {
+
                         for (Iterator iterator = selectedObjects.iterator(); iterator.hasNext();) {
                             AnnotationObject paintObject = (AnnotationObject) iterator.next();
+                            paintObject.setCurrentPointIndex(-1);
+                            Point2D[] points = paintObject.getHighlightPoints();
+                            for (int i = 0; i < points.length; i++) {
+                                Point2D point = points[i];
+                                double dist = point.distance(new Point2D.Double(e.getPoint().getX() / zoom, e.getPoint().getY() / zoom));
+                                if (dist < closestDist) {
+                                    closestDist = dist;
+                                }
+                            }
+                        }
 
-                            paintObject.setCurrentPointIndex(0);
-                            paintObjects.remove(paintObject);
-                            tempObjects.add(paintObject);
+                        if (closestDist < 5.0) {
+                            for (Iterator iterator = selectedObjects.iterator(); iterator.hasNext();) {
+                                AnnotationObject paintObject = (AnnotationObject) iterator.next();
+
+                                paintObject.setCurrentPointIndex(0);
+                                paintObjects.remove(paintObject);
+                                tempObjects.add(paintObject);
+                            }
+                        }
+
+                    }
+                    break;
+                case AnnotationPaintPanel.MODE_ERASE: {
+                    Point loc = new Point((int) (e.getPoint().x / zoom), (int) (e.getPoint().y / zoom));
+                    int startX = loc.x - (eraseRad - 1) / 2;
+                    int startY = loc.y - (eraseRad - 1) / 2;
+                    int endX = loc.x + (eraseRad - 1) / 2;
+                    int endY = loc.y + (eraseRad - 1) / 2;
+                    if (startX < 0) {
+                        startX = 0;
+                    }
+                    if (startY < 0) {
+                        startY = 0;
+                    }
+                    if (endX > img.getWidth() - 1) {
+                        endX = img.getWidth() - 1;
+                    }
+                    if (endY > img.getHeight() - 1) {
+                        endY = img.getHeight() - 1;
+                    }
+                    WritableRaster raster = img.getRaster();
+                    for (int x = startX; x <= endX; x++) {
+                        for (int y = startY; y <= endY; y++) {
+                            raster.setSample(x, y, 3, 0);
                         }
                     }
-
+                    break;
                 }
-
-            } else if (currentMode == AnnotationPaintPanel.MODE_ERASE) {
-                Point loc = new Point((int) (e.getPoint().x / zoom), (int) (e.getPoint().y / zoom));
-                int startX = loc.x - (eraseRad - 1) / 2;
-                int startY = loc.y - (eraseRad - 1) / 2;
-                int endX = loc.x + (eraseRad - 1) / 2;
-                int endY = loc.y + (eraseRad - 1) / 2;
-                if (startX < 0) {
-                    startX = 0;
-                }
-                if (startY < 0) {
-                    startY = 0;
-                }
-                if (endX > img.getWidth() - 1) {
-                    endX = img.getWidth() - 1;
-                }
-                if (endY > img.getHeight() - 1) {
-                    endY = img.getHeight() - 1;
-                }
-
-                WritableRaster raster = img.getRaster();
-                for (int x = startX; x <= endX; x++) {
-                    for (int y = startY; y <= endY; y++) {
-                        raster.setSample(x, y, 3, 0);
+                case AnnotationPaintPanel.MODE_POINT: {
+                    Point loc = new Point((int) (e.getPoint().x / zoom), (int) (e.getPoint().y / zoom));
+                    int startX = loc.x - (eraseRad - 1) / 2;
+                    int startY = loc.y - (eraseRad - 1) / 2;
+                    int endX = loc.x + (eraseRad - 1) / 2;
+                    int endY = loc.y + (eraseRad - 1) / 2;
+                    if (startX < 0) {
+                        startX = 0;
                     }
-                }
-            } else if (currentMode == AnnotationPaintPanel.MODE_POINT) {
-                Point loc = new Point((int) (e.getPoint().x / zoom), (int) (e.getPoint().y / zoom));
-                int startX = loc.x - (eraseRad - 1) / 2;
-                int startY = loc.y - (eraseRad - 1) / 2;
-                int endX = loc.x + (eraseRad - 1) / 2;
-                int endY = loc.y + (eraseRad - 1) / 2;
-                if (startX < 0) {
-                    startX = 0;
-                }
-                if (startY < 0) {
-                    startY = 0;
-                }
-                if (endX > img.getWidth() - 1) {
-                    endX = img.getWidth() - 1;
-                }
-                if (endY > img.getHeight() - 1) {
-                    endY = img.getHeight() - 1;
-                }
-
-                WritableRaster raster = img.getRaster();
-                for (int x = startX; x <= endX; x++) {
-                    for (int y = startY; y <= endY; y++) {
-
-                        img.setRGB(x, y, this.getDrawColor().getRGB());
-                        raster.setSample(x, y, 3, (int) (255 * this.getAlpha()));
-
+                    if (startY < 0) {
+                        startY = 0;
                     }
+                    if (endX > img.getWidth() - 1) {
+                        endX = img.getWidth() - 1;
+                    }
+                    if (endY > img.getHeight() - 1) {
+                        endY = img.getHeight() - 1;
+                    }
+                    WritableRaster raster = img.getRaster();
+                    for (int x = startX; x <= endX; x++) {
+                        for (int y = startY; y <= endY; y++) {
+
+                            img.setRGB(x, y, this.getDrawColor().getRGB());
+                            raster.setSample(x, y, 3, (int) (255 * this.getAlpha()));
+
+                        }
+                    }
+                    break;
                 }
+                default:
+                    break;
             }
         }
         drag = false;
@@ -1993,8 +1706,8 @@ public class AnnotationPaintPanel extends JPanel implements MouseListener, Mouse
         this.updatePanel();
     }
 
+    @Override
     public void mouseReleased(MouseEvent e) {
-        AnnotationNoteDialog.setCurrentMode(currentMode);
         if (currentMode == AnnotationPaintPanel.MODE_ERASE || currentMode == AnnotationPaintPanel.MODE_POINT) {
             mousePoint = new Point((int) (e.getX() / zoom), (int) (e.getY() / zoom));
 
@@ -2035,17 +1748,7 @@ public class AnnotationPaintPanel extends JPanel implements MouseListener, Mouse
 
                 if (object instanceof AnnotationNoteObject) {
                     AnnotationNoteObject notes = (AnnotationNoteObject) object;
-                    Vector edit_users = new Vector();
-                    edit_users = object.getEdit_user();
-                    if (edit_users.get(0).toString().equals("alluser>")) {
-                        new AnnotationNoteDialog(this, notes, antialiased);
-                    } else {
-                        for (int j = 0; j < edit_users.size(); j++) {
-                            if (edit_users.get(j).toString().equals(str_userid + ">")) {
-                                new AnnotationNoteDialog(this, notes, antialiased);
-                            }
-                        }
-                    }
+                    new AnnotationNoteDialog(this, notes, this.antialiased);
                 }
             }
         }
@@ -2053,6 +1756,7 @@ public class AnnotationPaintPanel extends JPanel implements MouseListener, Mouse
         this.updatePanel();
     }
 
+    @Override
     public void mouseEntered(MouseEvent e) {
         if (locationPanel != null) {
             int x = (int) (e.getX() / zoom);
@@ -2072,6 +1776,7 @@ public class AnnotationPaintPanel extends JPanel implements MouseListener, Mouse
 
     }
 
+    @Override
     public void mouseExited(MouseEvent e) {
         if (locationPanel != null) {
             locationPanel.updateLocation(null);
@@ -2083,19 +1788,7 @@ public class AnnotationPaintPanel extends JPanel implements MouseListener, Mouse
         }
     }
 
-    private boolean chk_current_user(Vector edit_users) {
-        if (edit_users.get(0).toString().equals("alluser>")) {
-            return true;
-        } else {
-            for (int j = 0; j < edit_users.size(); j++) {
-                if (edit_users.get(j).toString().equals(str_userid + ">")) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-
+    @Override
     public void mouseDragged(MouseEvent e) {
         drag = true;
         if ((e.getModifiersEx() & MouseEvent.BUTTON3_DOWN_MASK) == MouseEvent.BUTTON3_DOWN_MASK) {
@@ -2143,98 +1836,93 @@ public class AnnotationPaintPanel extends JPanel implements MouseListener, Mouse
 
                 locationPanel.repaint();
             }
-            if (currentMode == AnnotationPaintPanel.MODE_ERASE) {
-                mousePoint = null;
-                Point loc = new Point((int) (e.getPoint().x / zoom), (int) (e.getPoint().y / zoom));
-                int startX = loc.x - (eraseRad - 1) / 2;
-                int startY = loc.y - (eraseRad - 1) / 2;
-                int endX = loc.x + (eraseRad - 1) / 2;
-                int endY = loc.y + (eraseRad - 1) / 2;
-                if (startX < 0) {
-                    startX = 0;
-                }
-                if (startY < 0) {
-                    startY = 0;
-                }
-                if (endX > img.getWidth() - 1) {
-                    endX = img.getWidth() - 1;
-                }
-                if (endY > img.getHeight() - 1) {
-                    endY = img.getHeight() - 1;
-                }
-                WritableRaster raster = img.getRaster();
-                for (int x = startX; x <= endX; x++) {
-                    for (int y = startY; y <= endY; y++) {
-                        //          img.setRGB(x,y,bgColor.getRGB());
-                        raster.setSample(x, y, 3, 0);
+            switch (currentMode) {
+                case AnnotationPaintPanel.MODE_ERASE: {
+                    mousePoint = null;
+                    Point loc = new Point((int) (e.getPoint().x / zoom), (int) (e.getPoint().y / zoom));
+                    int startX = loc.x - (eraseRad - 1) / 2;
+                    int startY = loc.y - (eraseRad - 1) / 2;
+                    int endX = loc.x + (eraseRad - 1) / 2;
+                    int endY = loc.y + (eraseRad - 1) / 2;
+                    if (startX < 0) {
+                        startX = 0;
                     }
-                }
-            } else if (currentMode == AnnotationPaintPanel.MODE_POINT) {
-                Point loc = new Point((int) (e.getPoint().x / zoom), (int) (e.getPoint().y / zoom));
-                int startX = loc.x - (eraseRad - 1) / 2;
-                int startY = loc.y - (eraseRad - 1) / 2;
-                int endX = loc.x + (eraseRad - 1) / 2;
-                int endY = loc.y + (eraseRad - 1) / 2;
-                if (startX < 0) {
-                    startX = 0;
-                }
-                if (startY < 0) {
-                    startY = 0;
-                }
-                if (endX > img.getWidth() - 1) {
-                    endX = img.getWidth() - 1;
-                }
-                if (endY > img.getHeight() - 1) {
-                    endY = img.getHeight() - 1;
-                }
-
-                WritableRaster raster = img.getRaster();
-                for (int x = startX; x <= endX; x++) {
-                    for (int y = startY; y <= endY; y++) {
-
-                        img.setRGB(x, y, this.getDrawColor().getRGB());
-                        raster.setSample(x, y, 3, (int) (255 * this.getAlpha()));
+                    if (startY < 0) {
+                        startY = 0;
                     }
-                }
-            } else {
-                for (Iterator iterator = tempObjects.iterator(); iterator.hasNext();) {
-                    int x = e.getX();
-                    int y = e.getY();
-                    if (x < 0) {
-                        x = 0;
+                    if (endX > img.getWidth() - 1) {
+                        endX = img.getWidth() - 1;
                     }
-                    if (y < 0) {
-                        y = 0;
+                    if (endY > img.getHeight() - 1) {
+                        endY = img.getHeight() - 1;
                     }
-                    if (x > this.getPreferredSize().width) {
-                        x = this.getPreferredSize().width;
-                    }
-                    if (y > this.getPreferredSize().height) {
-                        y = this.getPreferredSize().height;
-                    }
-                    AnnotationObject tempObject = (AnnotationObject) iterator.next();
-                    if (tempObject.getStartDragLoc() == null) {
-                        tempObject.setStartDragLoc(new Point((int) (x / zoom), (int) (y / zoom)));
-                    }
-                    //  ตรวจสอบดูก่อนว่าชิ้นที่เลือกเอาไว้นั้น ผู้ใช้คนนี้มีสิทธิ์หรือไม่
-                    Vector edit_users = new Vector();
-                    edit_users = tempObject.getEdit_user();
-                    if (edit_users.get(0).toString().equals("alluser>")) {
-                        tempObject.updateLocation(new Point((int) (x / zoom), (int) (y / zoom)));
-                    } else {
-                        for (int j = 0; j < edit_users.size(); j++) {
-                            if (edit_users.get(j).toString().equals(str_userid + ">")) {
-                                tempObject.updateLocation(new Point((int) (x / zoom), (int) (y / zoom)));
-                            }
+                    WritableRaster raster = img.getRaster();
+                    for (int x = startX; x <= endX; x++) {
+                        for (int y = startY; y <= endY; y++) {
+                            //          img.setRGB(x,y,bgColor.getRGB());
+                            raster.setSample(x, y, 3, 0);
                         }
                     }
+                    break;
                 }
+                case AnnotationPaintPanel.MODE_POINT: {
+                    Point loc = new Point((int) (e.getPoint().x / zoom), (int) (e.getPoint().y / zoom));
+                    int startX = loc.x - (eraseRad - 1) / 2;
+                    int startY = loc.y - (eraseRad - 1) / 2;
+                    int endX = loc.x + (eraseRad - 1) / 2;
+                    int endY = loc.y + (eraseRad - 1) / 2;
+                    if (startX < 0) {
+                        startX = 0;
+                    }
+                    if (startY < 0) {
+                        startY = 0;
+                    }
+                    if (endX > img.getWidth() - 1) {
+                        endX = img.getWidth() - 1;
+                    }
+                    if (endY > img.getHeight() - 1) {
+                        endY = img.getHeight() - 1;
+                    }
+                    WritableRaster raster = img.getRaster();
+                    for (int x = startX; x <= endX; x++) {
+                        for (int y = startY; y <= endY; y++) {
+
+                            img.setRGB(x, y, this.getDrawColor().getRGB());
+                            raster.setSample(x, y, 3, (int) (255 * this.getAlpha()));
+                        }
+                    }
+                    break;
+                }
+                default:
+                    for (Iterator iterator = tempObjects.iterator(); iterator.hasNext();) {
+                        int x = e.getX();
+                        int y = e.getY();
+                        if (x < 0) {
+                            x = 0;
+                        }
+                        if (y < 0) {
+                            y = 0;
+                        }
+                        if (x > this.getPreferredSize().width) {
+                            x = this.getPreferredSize().width;
+                        }
+                        if (y > this.getPreferredSize().height) {
+                            y = this.getPreferredSize().height;
+                        }
+                        AnnotationObject tempObject = (AnnotationObject) iterator.next();
+                        if (tempObject.getStartDragLoc() == null) {
+                            tempObject.setStartDragLoc(new Point((int) (x / zoom), (int) (y / zoom)));
+                        }
+                        tempObject.updateLocation(new Point((int) (x / zoom), (int) (y / zoom)));
+                    }
+                    break;
             }
         }
         autoSaveAnnotaion();
         this.updatePanel();
     }
 
+    @Override
     public void mouseMoved(MouseEvent e) {
         if (locationPanel != null) {
             int x = (int) (e.getX() / zoom);
@@ -2255,37 +1943,14 @@ public class AnnotationPaintPanel extends JPanel implements MouseListener, Mouse
     }
 
     public void mouseWheelMoved(MouseWheelEvent e) {
-//
-//        if (currentMode == AnnotationPaintPanel.MODE_ERASE || currentMode == AnnotationPaintPanel.MODE_POINT) {
-//            mousePoint = new Point((int) (e.getX() / zoom), (int) (e.getY() / zoom));
-//
-//        }
-//        boolean ctrl = (e.getModifiers() & MouseEvent.CTRL_MASK) == MouseEvent.CTRL_MASK;
-//        if (currentMode == AnnotationPaintPanel.MODE_ERASE && ctrl || currentMode == AnnotationPaintPanel.MODE_POINT && ctrl) {
-//            if (e.getWheelRotation() > 0) {
-//                eraseRad -= 2;
-//                if (eraseRad < 1) {
-//                    eraseRad = 1;
-//                }
-//            }
-//            if (e.getWheelRotation() < 0) {
-//                eraseRad += 2;
-//            }
-//            this.updatePanel();
-//        } else {
         if (e.getWheelRotation() > 0) {
             this.setZoom(this.getZoom() - 0.25);
-//                zoom--;
-//                if (zoom < 1) {
-//                    zoom = 1;
-//                }
         }
         if (e.getWheelRotation() < 0) {
             //zoom++;
             this.setZoom(this.getZoom() + 0.25);
         }
         this.zoomed(e.getPoint());
-        //}
     }
 
     public void loadProperties() {

@@ -35,15 +35,14 @@ public class AnnotationNoteDialog extends javax.swing.JDialog implements Propert
     private Color textsColor = Color.BLACK;
     private Color bgsColor =Color.YELLOW;
     private Color brColor = Color.BLUE;    
-    private boolean antialiased;
+    private boolean antialiased = true;
     private Font font;
-    private static int mode;
     private AnnotationFontChooserPanel fontChooser;
     private ColorButton textColor;
     private ColorButton bgColor;
     private ColorButton borderColor;
     private StrokeChooserPanel stroke;
-    private static Stroke strokes;
+    private Stroke strokes;
     private JCheckBox jck;
     private boolean bgTransparent = false;
     private JLabel label;
@@ -51,25 +50,17 @@ public class AnnotationNoteDialog extends javax.swing.JDialog implements Propert
     private String oldNote;
     private boolean fixNote = false;
     private double strokeWidth;
-    private String view_user;
-    private String edit_user;
-    private String del_user;
-    private String owner_user;
+
     /** Creates new form AnnotationNoteDialog */
     
-    public AnnotationNoteDialog(AnnotationPaintPanel paintPanel, Point2D locationStart, String view_user, String edit_user, 
-            String del_user, String owner_user, boolean antialiased) {
+    public AnnotationNoteDialog(AnnotationPaintPanel paintPanel, Point2D locationStart, boolean antialiased) {
         super(null, DEFAULT_MODALITY_TYPE);
         this.paintPanel = paintPanel;
         this.locationStart = locationStart;
         this.font = new Font("Tahoma", 0, 10);
         this.antialiased = antialiased;
-        AnnotationNoteDialog.strokes = new BasicStroke(1);
+        this.strokes = new BasicStroke(1);
         this.strokeWidth = 1.0;
-        this.view_user = view_user;
-        this.edit_user = edit_user;
-        this.del_user = del_user;
-        this.owner_user = owner_user;
         initComponents();
         this.setLocationRelativeTo(null);
         
@@ -84,17 +75,12 @@ public class AnnotationNoteDialog extends javax.swing.JDialog implements Propert
         this.locationStart = this.noteObj.getLocation();
         this.font = this.noteObj.getFont();
         this.oldNote = this.noteObj.getText();
-        this.antialiased = antialiased;
         this.textsColor = this.noteObj.gettextColor();
         this.bgsColor = this.noteObj.getBGColor();
         this.brColor = this.noteObj.getBDColor(); 
         this.bgTransparent = this.noteObj.isBackgroundTransparent();
-        this.view_user = this.noteObj.getViewUser();
-        this.edit_user = this.noteObj.getEditUser();
-        this.del_user = this.noteObj.getDeleteUser();
-        this.owner_user = this.noteObj.getOwnerUser();
-        
-        AnnotationNoteDialog.strokes = this.noteObj.getStroke();
+        this.antialiased = antialiased;
+        this.strokes = this.noteObj.getStroke();
         this.strokeWidth = this.noteObj.getStrokeWidth();
                 
         fixNote = true;
@@ -222,7 +208,7 @@ public class AnnotationNoteDialog extends javax.swing.JDialog implements Propert
         
         if(!note_after.equals("")){
             //JImageNoteObject notes = new JImageNoteObject(paintPanel, view_user, edit_user, del_user, owner_user, font, textsColor, bgsColor, brColor, new Point((int)locationStart.getX(), (int)locationStart.getY()), note_after, antialiased, strokes, bgTransparent);
-            AnnotationNoteObject notes = new AnnotationNoteObject(paintPanel, view_user, edit_user, del_user, owner_user, font, textsColor, bgsColor, brColor, new Point((int)locationStart.getX(), (int)locationStart.getY()), note_after, antialiased, strokes, bgTransparent, 0.0, 0.0, 1.0f);
+            AnnotationNoteObject notes = new AnnotationNoteObject(paintPanel, font, textsColor, bgsColor, brColor, new Point((int)locationStart.getX(), (int)locationStart.getY()), note_after, antialiased, strokes, bgTransparent, 0.0, 0.0, 1.0f);
             notes.setStrokeWidth(this.stroke.getStrokeWidth());
             //notes.setPanel(paintPanel);
             paintPanel.addNoteObjects(notes);
@@ -231,9 +217,6 @@ public class AnnotationNoteDialog extends javax.swing.JDialog implements Propert
         
         this.dispose();
     }//GEN-LAST:event_ok_buttonActionPerformed
-    public static void setCurrentMode(int mode){
-        AnnotationNoteDialog.mode = mode;
-    }
     
     
     public void propertyChange(PropertyChangeEvent evt) {
