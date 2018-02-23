@@ -1,13 +1,11 @@
 package com.github.somprasongd.java.paint.objects;
 
-import annotation.AnnotationPaintPanel;
 import java.awt.*;
 import java.awt.geom.GeneralPath;
 import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.QuadCurve2D;
 import java.util.ArrayList;
-import java.util.Vector;
 
 /**
  * Draws a "QuadArrow".
@@ -50,23 +48,21 @@ public class AnnotationQuadArrowObject extends AnnotationObject {
     private Point2D startPointDrag;
     private double startWidthDrag;
     private boolean filled;
-    private AnnotationPaintPanel paintPanel;
 
-    public AnnotationQuadArrowObject() {
-
-    }
-
-    public AnnotationQuadArrowObject(AnnotationPaintPanel paintPanel,
+    public AnnotationQuadArrowObject(
             Color color, Point2D locationStart, Stroke stroke, boolean antialiased, boolean filled, float alpha) {
 
         super(color, null, antialiased, alpha);
-        this.paintPanel = paintPanel;
         this.locationStart = locationStart;
         this.locationCtrl = locationStart;
         this.locationEnd = locationStart;
         this.stroke = stroke;
         this.filled = filled;
         this.init();
+    }
+
+    public AnnotationQuadArrowObject() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     public void init() {
@@ -324,8 +320,9 @@ public class AnnotationQuadArrowObject extends AnnotationObject {
         return new double[]{0.5, 0.5};
     }
 
+    @Override
     public AnnotationObject createCopy(int xOffset, int yOffset) {
-        AnnotationQuadArrowObject copy = new AnnotationQuadArrowObject(this.paintPanel, this.getColor(), this.getLocationStart(), this.getStroke(), this.isAntialiased(), this.isFilled(),
+        AnnotationQuadArrowObject copy = new AnnotationQuadArrowObject(this.getColor(), this.getLocationStart(), this.getStroke(), this.isAntialiased(), this.isFilled(),
                 this.getAlpha());
         copy.locationEnd = new Point2D.Double(this.locationEnd.getX() + xOffset, this.locationEnd.getY() + yOffset);
         copy.locationStart = new Point2D.Double(this.locationStart.getX() + xOffset, this.locationStart.getY() + yOffset);
@@ -343,8 +340,7 @@ public class AnnotationQuadArrowObject extends AnnotationObject {
     @Override
     public String getInfo() {
 
-        String filename = paintPanel.getCurrentImageFilename();
-
+//        String filename = paintPanel.getCurrentImageFilename();
         String locatStart = new StringBuilder().append(this.locationStart.getX()).append("|").append(this.locationStart.getY()).toString();
 
         String locatEnd = new StringBuilder().append(this.locationEnd.getX()).append("|").append(this.locationEnd.getY()).toString();
@@ -358,17 +354,18 @@ public class AnnotationQuadArrowObject extends AnnotationObject {
         String str_double = new StringBuilder().append(headMult).append("|").append(endWidth).append("|").append(tipWidth).append("|").append(startWidth).toString();
 
         return (new StringBuilder()).
-                append(filename).append("|Arrow|").append(locatStart).append("|").append(locatEnd).append("|").
+                //                append(filename).
+                append("|Arrow|").append(locatStart).append("|").append(locatEnd).append("|").
                 append(this.getColor().getRGB()).append("|").append(getlocatStart).append("|").append(strokes).append("|").
                 append(this.isAntialiased()).append("|").append(this.isFilled()).append("|").append(this.getAlpha()).append("|").
                 append(locatCtrl).append("|").append(str_double).append("|").toString();
     }
 
-    public AnnotationObject loadArrow(AnnotationPaintPanel paintPanel, String view_user, String edit_user, String del_user, String owner_user,
+    public AnnotationObject loadArrow(String view_user, String edit_user, String del_user, String owner_user,
             double xStart, double yStart, double xEnd, double yEnd, double xCtrl, double yCtrl, double head, double end,
             double tip, double start, Color color, Point2D location, Stroke stroke, boolean antia, boolean fill, float alpha) {
 
-        AnnotationQuadArrowObject copy = new AnnotationQuadArrowObject(paintPanel,
+        AnnotationQuadArrowObject copy = new AnnotationQuadArrowObject(
                 color, location, stroke, antia, fill, alpha);
         copy.locationEnd = new Point2D.Double(xEnd, yEnd);
         copy.locationStart = new Point2D.Double(xStart, yStart);

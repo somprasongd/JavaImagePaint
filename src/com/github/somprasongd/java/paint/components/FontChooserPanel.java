@@ -59,7 +59,7 @@ public class FontChooserPanel extends javax.swing.JPanel {
         gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
         add(combFontName, gridBagConstraints);
 
-        spinnerFontSize.setModel(new javax.swing.SpinnerNumberModel(14.0d, 1.0d, 500.0d, 1.0d));
+        spinnerFontSize.setModel(new javax.swing.SpinnerNumberModel(14, 1, 500, 1));
         spinnerFontSize.addChangeListener(new javax.swing.event.ChangeListener() {
             public void stateChanged(javax.swing.event.ChangeEvent evt) {
                 spinnerFontSizeStateChanged(evt);
@@ -157,8 +157,7 @@ public class FontChooserPanel extends javax.swing.JPanel {
             i = Font.ITALIC;
         }
         return new Font(combFontName.getSelectedItem().toString(),
-                b | i,
-                ((Double) spinnerFontSize.getModel().getValue()).intValue());
+                b | i, ((Integer) spinnerFontSize.getModel().getValue()));
     }
     
     private void updateFont() {
@@ -188,7 +187,7 @@ public class FontChooserPanel extends javax.swing.JPanel {
         }
 
         combFontName.setSelectedItem(fontName);
-        spinnerFontSize.setValue(14.0d);
+        spinnerFontSize.setValue(14);
         tglBold.setSelected(false);
         tglItalic.setSelected(false);
     }

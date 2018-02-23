@@ -6,9 +6,7 @@
 package com.github.somprasongd.java.paint.components;
 
 import com.github.somprasongd.java.paint.objects.AnnotationNoteObject;
-import java.awt.BasicStroke;
 import java.awt.Color;
-import java.awt.Font;
 import java.awt.Point;
 import java.awt.geom.Point2D;
 
@@ -20,17 +18,13 @@ public class NoteDialog extends javax.swing.JDialog {
 
     private Point2D locationStart;
     private boolean antialiased = true;
-    private Font font;
-    private Color textsColor = Color.BLACK;
-    private Color bgsColor =Color.YELLOW;
-    private Color brColor = Color.BLUE;   
-    private boolean bgTransparent = false;
-    private double strokeWidth;
     private AnnotationNoteObject noteObj;
     private String oldNote;
 
     /**
      * Creates new form NoteDialog
+     * @param parent
+     * @param modal
      */
     public NoteDialog(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
@@ -119,6 +113,7 @@ public class NoteDialog extends javax.swing.JDialog {
         getContentPane().add(jPanel1, java.awt.BorderLayout.NORTH);
 
         txtNote.setColumns(20);
+        txtNote.setLineWrap(true);
         txtNote.setRows(5);
         jScrollPane1.setViewportView(txtNote);
 
@@ -144,11 +139,21 @@ public class NoteDialog extends javax.swing.JDialog {
     private void btnOKActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnOKActionPerformed
         String note_before = txtNote.getText();
         
-        String note_after = note_before.replace("\n", ":");
-        
+        String note_after = note_before.replace("\n", ":");        
         
         if(!note_after.equals("")){
-            this.noteObj = new AnnotationNoteObject(font, textsColor, bgsColor, brColor, new Point((int)locationStart.getX(), (int)locationStart.getY()), note_after, antialiased, strokeChooserPanel.getStroke(), bgTransparent, 0.0, 0.0, 1.0f);
+            this.noteObj = new AnnotationNoteObject(fontChooserPanel1.getSelectedFont(), 
+                    fontChooserPanel1.getFontColor(), 
+                    btnBgColor.getColor(), 
+                    btnBorderColor.getColor(), 
+                    new Point((int)locationStart.getX(), (int)locationStart.getY()), 
+                    note_after, 
+                    antialiased, 
+                    strokeChooserPanel.getStroke(), 
+                    chkbBgTransparent.isSelected(), 
+                    0.0, 
+                    0.0, 
+                    1.0f);
             this.noteObj.setStrokeWidth(strokeChooserPanel.getStrokeWidth());
         }
         
@@ -170,7 +175,8 @@ public class NoteDialog extends javax.swing.JDialog {
     private javax.swing.JTextArea txtNote;
     // End of variables declaration//GEN-END:variables
 
-    public void open(Point2D locationStart, boolean antialiased){
+    public AnnotationNoteObject open(Point2D locationStart, boolean antialiased){
+        this.noteObj = null;
         this.locationStart = locationStart;
         this.antialiased = antialiased;
         
@@ -183,9 +189,10 @@ public class NoteDialog extends javax.swing.JDialog {
         
         this.setLocationRelativeTo(null);        
         this.setVisible(true);
+        return this.noteObj;
     }
     
-    public void edit(AnnotationNoteObject noteObj, boolean antialiased){
+    public AnnotationNoteObject edit(AnnotationNoteObject noteObj, boolean antialiased){
         this.noteObj = noteObj;
         this.locationStart = this.noteObj.getLocation();
         this.antialiased = antialiased;
@@ -197,10 +204,12 @@ public class NoteDialog extends javax.swing.JDialog {
         chkbBgTransparent.setSelected(this.noteObj.isBackgroundTransparent());
         strokeChooserPanel.setStrokeWidth(this.noteObj.getStrokeWidth());
         
+        this.oldNote = this.noteObj.getText();
         String str_note =  oldNote.replace(":", "\n");
         txtNote.setText(str_note);
         
         this.setLocationRelativeTo(null);        
         this.setVisible(true);
+        return this.noteObj;
     }
 }

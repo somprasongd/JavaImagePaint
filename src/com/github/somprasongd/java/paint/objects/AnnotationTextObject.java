@@ -1,6 +1,6 @@
 package com.github.somprasongd.java.paint.objects;
 
-import annotation.AnnotationPaintPanel;
+import com.github.somprasongd.java.paint.components.PaintPanel;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.font.FontRenderContext;
@@ -22,23 +22,22 @@ public class AnnotationTextObject extends AnnotationObject {
     private String text;
     private TextLayout layout;
     private int caretPos;
-    private AnnotationPaintPanel panel;
+    private PaintPanel panel;
     private Point2D locationDrag;
-    private AnnotationPaintPanel paintPanel;
 
     public AnnotationTextObject() {
 
     }
 
-    public AnnotationTextObject(AnnotationPaintPanel paintPanel,
+    public AnnotationTextObject(
             Font font, Color color, Point2D location, String text, boolean antialiased) {
         super(color, location, antialiased);
-        this.paintPanel = paintPanel;
         this.font = font;
         this.text = text;
         caretPos = 0;
     }
 
+    @Override
     public void addGraphics(Graphics2D g) {
         g.setColor(this.getColor());
         g.setFont(font);
@@ -161,13 +160,13 @@ public class AnnotationTextObject extends AnnotationObject {
         }
     }
 
-    public void setPanel(AnnotationPaintPanel panel) {
+    public void setPanel(PaintPanel panel) {
         this.panel = panel;
     }
 
     public AnnotationObject createCopy(int xOffset, int yOffset) {
         Point2D first = this.getLocation();
-        AnnotationTextObject copy = new AnnotationTextObject(this.paintPanel,
+        AnnotationTextObject copy = new AnnotationTextObject(
                 this.getFont(), this.getColor(), new Point2D.Double(first.getX() + xOffset, first.getY() + yOffset), this.getText(),
                 this.isAntialiased());
         return copy;
@@ -177,32 +176,32 @@ public class AnnotationTextObject extends AnnotationObject {
     public String getInfo() {
         Point2D first = this.getLocation();
 
-        String filename = paintPanel.getCurrentImageFilename();
-
+//        String filename = paintPanel.getCurrentImageFilename();
         String fonts = new StringBuilder().append(this.getFont().getName()).append("|").append(this.getFont().getStyle()).append("|").append(this.getFont().getSize()).toString();
 
         String point = new StringBuilder().append(first.getX()).append("|").append(first.getY()).toString();
 
         return (new StringBuilder()).
-                append(filename).append("|Text|").append(fonts).append("|").append(this.getColor().getRGB()).
+                //                append(filename).
+                append("|Text|").append(fonts).append("|").append(this.getColor().getRGB()).
                 append("|").append(point).append("|").append(this.getText()).append("|").append(this.isAntialiased()).
                 append("|").append(this.getAlpha()).append("|").toString();
     }
 
-    public AnnotationObject loadText(AnnotationPaintPanel paintPanel, String view_user, String edit_user, String del_user,
+    public AnnotationObject loadText(String view_user, String edit_user, String del_user,
             String owner_user, Font font, Color color, Point2D p2d, String text, boolean antia, float alpha) {
-        AnnotationTextObject copy = new AnnotationTextObject(paintPanel,
+        AnnotationTextObject copy = new AnnotationTextObject(
                 font, color, p2d, text, antia);
         return copy;
     }
 
     @Override
     public Font getTextFont() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return null;
     }
 
     @Override
     public String getTextNote() {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }    
+        return null;
+    }
 }

@@ -1,10 +1,8 @@
 package com.github.somprasongd.java.paint.objects;
 
-import annotation.AnnotationPaintPanel;
 import java.awt.*;
 import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
-import java.util.Vector;
 
 /**
  * Draws a Line2D.
@@ -21,21 +19,19 @@ public class AnnotationLineObject extends AnnotationObject {
     private Point2D locStartDrag;
     private Point2D locEndDrag;
     private Stroke stroke;
-    private AnnotationPaintPanel paintPanel;
 
-    public AnnotationLineObject() {
-
-    }
-
-    public AnnotationLineObject(AnnotationPaintPanel paintPanel,
+    public AnnotationLineObject(
             Color color, Point2D locationStart, Stroke stroke, boolean antialiased, float alpha) {
 
         super(color, null, antialiased, alpha);
-        this.paintPanel = paintPanel;
         this.locationStart = locationStart;
         this.locationEnd = locationStart;
         this.stroke = stroke;
         this.updateMiddle();
+    }
+
+    public AnnotationLineObject() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     public void updateMiddle() {
@@ -141,7 +137,7 @@ public class AnnotationLineObject extends AnnotationObject {
 
     @Override
     public AnnotationObject createCopy(int xOffset, int yOffset) {
-        AnnotationLineObject copy = new AnnotationLineObject(this.paintPanel,
+        AnnotationLineObject copy = new AnnotationLineObject(
                 this.getColor(), this.getLocationStart(), this.getStroke(), this.isAntialiased(), this.getAlpha());
         copy.locationEnd = new Point2D.Double(this.locationEnd.getX() + xOffset, this.locationEnd.getY() + yOffset);
         copy.locationStart = new Point2D.Double(this.locationStart.getX() + xOffset, this.locationStart.getY() + yOffset);
@@ -151,7 +147,7 @@ public class AnnotationLineObject extends AnnotationObject {
 
     @Override
     public String getInfo() {
-        String filename = paintPanel.getCurrentImageFilename();
+//        String filename = paintPanel.getCurrentImageFilename();
 
         String locatStart = new StringBuilder().append(this.locationStart.getX()).append("|").
                 append(this.locationStart.getY()).toString();
@@ -165,17 +161,18 @@ public class AnnotationLineObject extends AnnotationObject {
         String strokes = new StringBuilder().append(((BasicStroke) this.getStroke()).getLineWidth()).toString();
 
         return (new StringBuilder()).
-                append(filename).append("|Line|").append(locatStart).append("|").append(locatEnd).append("|").
+                //                append(filename).
+                append("|Line|").append(locatStart).append("|").append(locatEnd).append("|").
                 append(this.getColor().getRGB()).append("|").append(getlocatStart).append("|").append(strokes).
                 append("|").append(this.isAntialiased()).append("|").append(false).append("|").append(this.getAlpha()).
                 append("|").toString();
     }
 
-    public AnnotationObject loadLine(AnnotationPaintPanel paintPanel, String view_user, String edit_user, String del_user,
+    public AnnotationObject loadLine(String view_user, String edit_user, String del_user,
             String owner_user, double xStart, double yEnd, double xEnd, double yStart, Color color, Point2D local,
             Stroke stroke, boolean antia, float alpha) {
 
-        AnnotationLineObject copy = new AnnotationLineObject(paintPanel,
+        AnnotationLineObject copy = new AnnotationLineObject(
                 color, local, stroke, antia, alpha);
         copy.locationEnd = new Point2D.Double(xEnd, yEnd);
         copy.locationStart = new Point2D.Double(xStart, yStart);

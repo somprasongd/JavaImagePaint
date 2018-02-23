@@ -1,10 +1,8 @@
 package com.github.somprasongd.java.paint.objects;
 
-import annotation.AnnotationPaintPanel;
 import java.awt.*;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Point2D;
-import java.util.Vector;
 
 /**
  * Draws an Elipse2D.
@@ -22,15 +20,13 @@ public class AnnotationOvalObject extends AnnotationObject {
     private Point2D locEndDrag;
     private Stroke stroke;
     private boolean filled;
-    private AnnotationPaintPanel paintPanel;
 
     public AnnotationOvalObject() {
 
     }
 
-    public AnnotationOvalObject(AnnotationPaintPanel paintPanel, Color color, Point2D locationStart, Stroke stroke, boolean antialiased, boolean filled, float alpha) {
+    public AnnotationOvalObject(Color color, Point2D locationStart, Stroke stroke, boolean antialiased, boolean filled, float alpha) {
         super(color, null, antialiased, alpha);
-        this.paintPanel = paintPanel;
         this.locationStart = locationStart;
         this.locationEnd = locationStart;
         this.filled = filled;
@@ -200,12 +196,14 @@ public class AnnotationOvalObject extends AnnotationObject {
         this.filled = filled;
     }
 
+    @Override
     public double[] getTranslation() {
         return new double[]{0.5, 0.5};
     }
 
+    @Override
     public AnnotationObject createCopy(int xOffset, int yOffset) {
-        AnnotationOvalObject copy = new AnnotationOvalObject(this.paintPanel,
+        AnnotationOvalObject copy = new AnnotationOvalObject(
                 this.getColor(), this.getLocationStart(), this.getStroke(), this.isAntialiased(), this.isFilled(), this.getAlpha());
         copy.locationEnd = new Point2D.Double(this.locationEnd.getX() + xOffset, this.locationEnd.getY() + yOffset);
         copy.locationStart = new Point2D.Double(this.locationStart.getX() + xOffset, this.locationStart.getY() + yOffset);
@@ -216,8 +214,7 @@ public class AnnotationOvalObject extends AnnotationObject {
     @Override
     public String getInfo() {
 
-        String filename = paintPanel.getCurrentImageFilename();
-
+//        String filename = paintPanel.getCurrentImageFilename();
         String locatStart = new StringBuilder().append(this.locationStart.getX()).append("|").append(this.locationStart.getY()).toString();
 
         String locatEnd = new StringBuilder().append(this.locationEnd.getX()).append("|").append(this.locationEnd.getY()).toString();
@@ -227,17 +224,17 @@ public class AnnotationOvalObject extends AnnotationObject {
         String strokes = new StringBuilder().append(((BasicStroke) this.getStroke()).getLineWidth()).toString();
 
         return (new StringBuilder()).
-                append(filename).
+                //                append(filename).
                 append("|Oval|").append(locatStart).append("|").append(locatEnd).append("|").append(this.getColor().getRGB()).
                 append("|").append(getlocatStart).append("|").append(strokes).append("|").append(this.isAntialiased()).
                 append("|").append(this.isFilled()).append("|").append(this.getAlpha()).append("|").toString();
     }
 
-    public AnnotationObject loadOval(AnnotationPaintPanel paintPanel, String view_user, String edit_user, String owner_user,
+    public AnnotationObject loadOval(String view_user, String edit_user, String owner_user,
             String del_user, double xStart, double yEnd, double xEnd, double yStart, Color color, Point2D local, Stroke stroke,
             boolean antia, boolean fill, float alpha) {
 
-        AnnotationOvalObject copy = new AnnotationOvalObject(paintPanel,
+        AnnotationOvalObject copy = new AnnotationOvalObject(
                 color, local, stroke, antia, fill, alpha);
         copy.locationEnd = new Point2D.Double(xEnd, yEnd);
         copy.locationStart = new Point2D.Double(xStart, yStart);

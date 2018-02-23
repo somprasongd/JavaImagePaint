@@ -3,7 +3,6 @@ package com.github.somprasongd.java.paint.objects;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.geom.Point2D;
-import java.util.Vector;
 
 /**
  * An object used to hold infomation about something to draw on a Graphics2D

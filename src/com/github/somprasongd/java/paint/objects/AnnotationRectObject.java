@@ -1,11 +1,9 @@
 package com.github.somprasongd.java.paint.objects;
 
-import annotation.AnnotationPaintPanel;
 import java.awt.*;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.geom.RoundRectangle2D;
-import java.util.Vector;
 
 /**
  * Draws a Rectangle2D.
@@ -30,18 +28,12 @@ public class AnnotationRectObject extends AnnotationObject {
     private double arcHeight;
     private double arcHeightDrag;
     private String text;
-    private AnnotationPaintPanel paintPanel;
 
-    public AnnotationRectObject() {
-
-    }
-
-    public AnnotationRectObject(AnnotationPaintPanel paintPanel,
+    public AnnotationRectObject(
             Color color, Point2D locationStart, Stroke stroke, boolean antialiased, boolean filled, double arcWidth,
             double arcHeight, float alpha) {
 
         super(color, null, antialiased, alpha);
-        this.paintPanel = paintPanel;
         this.locationStart = locationStart;
         this.locationEnd = locationStart;
         this.arcWidth = arcWidth;
@@ -49,6 +41,10 @@ public class AnnotationRectObject extends AnnotationObject {
         this.filled = filled;
         this.stroke = stroke;
         this.updateMiddle();
+    }
+
+    public AnnotationRectObject() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     public void updateArcPoint() {
@@ -294,7 +290,7 @@ public class AnnotationRectObject extends AnnotationObject {
     }
 
     public AnnotationObject createCopy(int xOffset, int yOffset) {
-        AnnotationRectObject copy = new AnnotationRectObject(this.paintPanel,
+        AnnotationRectObject copy = new AnnotationRectObject(
                 this.getColor(), this.getLocationStart(), this.getStroke(), this.isAntialiased(), this.isFilled(), this.getArcWidth(),
                 this.getArcHeight(), this.getAlpha());
         copy.locationEnd = new Point2D.Double(this.locationEnd.getX() + xOffset, this.locationEnd.getY() + yOffset);
@@ -304,7 +300,7 @@ public class AnnotationRectObject extends AnnotationObject {
 
     @Override
     public String getInfo() {
-        String filename = paintPanel.getCurrentImageFilename();
+//        String filename = paintPanel.getCurrentImageFilename();
 
         String locatStart = new StringBuilder().append(this.locationStart.getX()).append("|").append(this.locationStart.getY()).toString();
 
@@ -315,17 +311,18 @@ public class AnnotationRectObject extends AnnotationObject {
         String strokes = new StringBuilder().append(((BasicStroke) this.getStroke()).getLineWidth()).toString();
 
         return (new StringBuilder()).
-                append(filename).append("|Rect|").append(locatStart).append("|").append(locatEnd).append("|").append(this.getColor().
+                //                append(filename).
+                append("|Rect|").append(locatStart).append("|").append(locatEnd).append("|").append(this.getColor().
                 getRGB()).append("|").append(getlocatStart).append("|").append(strokes).append("|").append(this.isAntialiased()).
                 append("|").append(this.isFilled()).append("|").append(this.getAlpha()).append("|").append(this.getArcWidth()).
                 append("|").append(this.getArcHeight()).append("|").toString();
     }
 
-    public AnnotationObject loadRect(AnnotationPaintPanel paintPanel, String view_user, String edit_user, String del_user,
+    public AnnotationObject loadRect(String view_user, String edit_user, String del_user,
             String owner_user, double xStart, double yEnd, double xEnd, double yStart, Color color, Point2D local, Stroke stroke,
             boolean antia, boolean fill, float alpha, double arcWidth, double arcHeight) {
 
-        AnnotationRectObject copy = new AnnotationRectObject(paintPanel,
+        AnnotationRectObject copy = new AnnotationRectObject(
                 color, local, stroke, antia, fill, arcWidth, arcHeight, alpha);
         copy.locationEnd = new Point2D.Double(xEnd, yEnd);
         copy.locationStart = new Point2D.Double(xStart, yStart);

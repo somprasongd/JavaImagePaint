@@ -1,6 +1,5 @@
 package com.github.somprasongd.java.paint.objects;
 
-import annotation.AnnotationPaintPanel;
 import java.awt.*;
 import java.awt.font.FontRenderContext;
 import java.awt.font.LineBreakMeasurer;
@@ -35,7 +34,6 @@ public class AnnotationNoteObject extends AnnotationObject {
     private double arcHeight;
     private double arcHeightDrag;
     private String text;
-    private AnnotationPaintPanel paintPanel;
     private Font font;
     private Color textColor;
     private Color bgColor;
@@ -55,7 +53,6 @@ public class AnnotationNoteObject extends AnnotationObject {
             Stroke stroke, boolean bgTransparent, double arcWidth, double arcHeight, float alpha) {
 
         super(textColor, null, antialiased, alpha);
-        this.paintPanel = paintPanel;
         this.locationStart = locationStart;
         this.locationEnd = new Point2D.Double(locationStart.getX() + 200, locationStart.getY() + 100);
         this.arcWidth = arcWidth;
@@ -407,7 +404,7 @@ public class AnnotationNoteObject extends AnnotationObject {
         String getlocatStart = new StringBuilder().append(this.getLocationStart().getX()).append("|").append(this.getLocationStart().getY()).toString();
 
         return (new StringBuilder()).
-               append("Note|").append(fonts).append("|").append(this.textColor.getRGB()).append("|").
+                append("Note|").append(fonts).append("|").append(this.textColor.getRGB()).append("|").
                 append(getlocatStart).append("|").append(this.getText()).append("|").append(this.isAntialiased()).
                 append("|").append(this.getAlpha()).append("|").append(this.bgColor.getRGB()).append("|").append(this.bdColor.getRGB()).
                 append("|").append(strokes).append("|").append(this.bgTransparent).append("|").append(this.getStrokeWidth()).
