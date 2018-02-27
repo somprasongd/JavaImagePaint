@@ -749,7 +749,6 @@ public class PaintPanel extends javax.swing.JPanel {
             return;
         }
         try {
-
             setImage(ImageIO.read(url));
         } catch (IOException ex) {
             Logger.getLogger(PaintPanel.class.getName()).log(Level.SEVERE, null, ex);
@@ -761,7 +760,6 @@ public class PaintPanel extends javax.swing.JPanel {
             return;
         }
         try {
-
             setImage(ImageIO.read(file));
         } catch (IOException ex) {
             Logger.getLogger(PaintPanel.class.getName()).log(Level.SEVERE, null, ex);
@@ -1349,5 +1347,26 @@ public class PaintPanel extends javax.swing.JPanel {
             updatePanel();
         }
         return file;
+    }
+    
+    public BufferedImage getPaintedImage() {
+        ArrayList filters = ImageIOFileFilter.getImageWriterFilters();
+        ImageIOFileFilter png = null;
+        for (int i = 0; i < filters.size(); i++) {
+            ImageIOFileFilter filter = (ImageIOFileFilter) filters.get(i);
+            if (filter.getPreferredExtString().equalsIgnoreCase("png")) {
+                png = filter;
+                break;
+            }
+        }
+        BufferedImage save = new BufferedImage(img.getWidth(), img.getHeight(), png.getBiType());
+        Graphics2D g = (Graphics2D) save.getGraphics();
+        if (!png.isSupportsAlpha()) {
+            g.setColor(this.bgColor);
+            g.fillRect(0, 0, img.getWidth(), img.getHeight());
+        }
+        g.drawImage(img, 0, 0, null);
+        g.drawImage(this.getObjectsImage(paintObjects), 0, 0, null);
+        return save;
     }
 }
