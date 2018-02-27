@@ -57,6 +57,8 @@ import javax.swing.JScrollPane;
  */
 public class PaintPanel extends javax.swing.JPanel {
 
+    private static final Logger LOG = Logger.getLogger(PaintPanel.class.getName());
+
     public static final int MODE_FREE_HAND = -1;
     public static final int MODE_LINE = 0;
     public static final int MODE_SCRIBBLE = 1;
@@ -1300,49 +1302,52 @@ public class PaintPanel extends javax.swing.JPanel {
      *
      * @return
      */
-    public boolean getPaintedImage() {
-        File file = new File(System.getProperty("user.dir"), "temp" + File.separator + new Date().getTime() + ".png");
-        if (file != null && file.getName().length() > 0) {
-            ArrayList filters = ImageIOFileFilter.getImageWriterFilters();
-            ImageIOFileFilter png = null;
-            for (int i = 0; i < filters.size(); i++) {
-                ImageIOFileFilter filter = (ImageIOFileFilter) filters.get(i);
-                if (filter.getPreferredExtString().equalsIgnoreCase("png")) {
-                    png = filter;
-                    break;
-                }
-            }
-            ImageWriter writer = png.getImageWriter();
-            if (!file.getPath().endsWith("." + png.getPreferredExtString())) {
-                file = new File(file.getPath() + "." + png.getPreferredExtString());
-            }
-//            this.currentFile = file;
-            for (Iterator iterator = selectedObjects.iterator(); iterator.hasNext();) {
-                AnnotationObject paintObject = (AnnotationObject) iterator.next();
-                paintObject.setSelected(false);
-            }
-            selectedObjects.clear();
-            BufferedImage save = new BufferedImage(img.getWidth(), img.getHeight(), png.getBiType());
-            Graphics2D g = (Graphics2D) save.getGraphics();
-            if (!png.isSupportsAlpha()) {
-                g.setColor(this.bgColor);
-                g.fillRect(0, 0, img.getWidth(), img.getHeight());
-            }
-            g.drawImage(img, 0, 0, null);
-            g.drawImage(this.getObjectsImage(paintObjects), 0, 0, null);
-            try {
-                ImageOutputStream stream = new FileImageOutputStream(file);
-                writer.setOutput(stream);
-                writer.write(save);
-                stream.close();
-                return true;
-            } catch (IOException e) {
-                e.printStackTrace();
-                return false;
-            } finally {
-                updatePanel();
+    public File getPaintedImage(File file) {
+        if (file == null || !file.isFile()) {
+            file = new File(System.getProperty("user.dir"), "temp" + File.separator + new Date().getTime() + ".png");
+        }
+        if (file.getParentFile().isDirectory() && !file.getParentFile().exists()) {
+            file.getParentFile().mkdirs();
+        }
+
+        ArrayList filters = ImageIOFileFilter.getImageWriterFilters();
+        ImageIOFileFilter png = null;
+        for (int i = 0; i < filters.size(); i++) {
+            ImageIOFileFilter filter = (ImageIOFileFilter) filters.get(i);
+            if (filter.getPreferredExtString().equalsIgnoreCase("png")) {
+                png = filter;
+                break;
             }
         }
-        return false;
+        ImageWriter writer = png.getImageWriter();
+        if (!file.getPath().endsWith("." + png.getPreferredExtString())) {
+            file = new File(file.getPath() + "." + png.getPreferredExtString());
+        }
+//            this.currentFile = file;
+        for (Iterator iterator = selectedObjects.iterator(); iterator.hasNext();) {
+            AnnotationObject paintObject = (AnnotationObject) iterator.next();
+            paintObject.setSelected(false);
+        }
+        selectedObjects.clear();
+        BufferedImage save = new BufferedImage(img.getWidth(), img.getHeight(), png.getBiType());
+        Graphics2D g = (Graphics2D) save.getGraphics();
+        if (!png.isSupportsAlpha()) {
+            g.setColor(this.bgColor);
+            g.fillRect(0, 0, img.getWidth(), img.getHeight());
+        }
+        g.drawImage(img, 0, 0, null);
+        g.drawImage(this.getObjectsImage(paintObjects), 0, 0, null);
+        try {
+            ImageOutputStream stream = new FileImageOutputStream(file);
+            writer.setOutput(stream);
+            writer.write(save);
+            stream.close();
+        } catch (IOException e) {
+            LOG.log(Level.SEVERE, e.getMessage(), e);
+            file = null;
+        } finally {
+            updatePanel();
+        }
+        return file;
     }
 }

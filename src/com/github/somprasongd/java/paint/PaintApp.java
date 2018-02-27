@@ -106,7 +106,6 @@ public class PaintApp extends javax.swing.JPanel {
         tglBtnDrawText = new javax.swing.JToggleButton();
         fontChooserPanel = new com.github.somprasongd.java.paint.components.FontChooserPanel();
         jSeparator3 = new javax.swing.JToolBar.Separator();
-        btnSave = new javax.swing.JButton();
         panelDraw = new javax.swing.JPanel();
         scrollPane = new javax.swing.JScrollPane();
         paintPanel = new com.github.somprasongd.java.paint.components.PaintPanel();
@@ -262,18 +261,6 @@ public class PaintApp extends javax.swing.JPanel {
         fontChooserPanel.setPropName("font");
         topToolbar.add(fontChooserPanel);
         topToolbar.add(jSeparator3);
-
-        btnSave.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/github/somprasongd/java/paint/icons/save.png"))); // NOI18N
-        btnSave.setToolTipText(bundle.getString("SAVE")); // NOI18N
-        btnSave.setFocusable(false);
-        btnSave.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        btnSave.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        btnSave.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnSaveActionPerformed(evt);
-            }
-        });
-        topToolbar.add(btnSave);
 
         add(topToolbar, java.awt.BorderLayout.NORTH);
 
@@ -446,15 +433,10 @@ public class PaintApp extends javax.swing.JPanel {
         paintPanel.setFilled(tglBtnFillColor.isSelected());
     }//GEN-LAST:event_tglBtnFillColorActionPerformed
 
-    private void btnSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSaveActionPerformed
-        saveImageFile();
-    }//GEN-LAST:event_btnSaveActionPerformed
-
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JToolBar bottomToolbar;
     private com.github.somprasongd.java.paint.components.ColorButton btnColor;
-    private javax.swing.JButton btnSave;
     private javax.swing.JButton btnZoomIn;
     private javax.swing.JButton btnZoomOut;
     private javax.swing.JButton btnZoomReset;
@@ -496,28 +478,8 @@ public class PaintApp extends javax.swing.JPanel {
     public void setImage(BufferedImage img) {
         paintPanel.setImage(img);
     }
-    /**
-     * Save an iamge and all annotion together
-     *
-     * @return
-     */
-    public void saveImageFile() {
-        if (saveChooser == null) {
-            saveChooser = new JFileChooser();
-            ArrayList filters = ImageIOFileFilter.getImageWriterFilters();
-            ImageIOFileFilter png = null;
-            for (int i = 0; i < filters.size(); i++) {
-                ImageIOFileFilter filter = (ImageIOFileFilter) filters.get(i);
-                if (filter.getPreferredExtString().equalsIgnoreCase("png")) {
-                    png = filter;
-                }
-                saveChooser.addChoosableFileFilter(filter);
-                saveChooser.setAcceptAllFileFilterUsed(false);
-            }
-            if (png != null) {
-                saveChooser.setFileFilter(png);
-            }
-        }        
-        paintPanel.getPaintedImage();
+    
+    public File getImage(File file) {
+        return paintPanel.getPaintedImage(file);
     }
 }
