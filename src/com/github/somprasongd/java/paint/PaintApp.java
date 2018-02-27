@@ -482,4 +482,8 @@ public class PaintApp extends javax.swing.JPanel {
     public File getImage(File file) {
         return paintPanel.getPaintedImage(file);
     }
+    
+    public BufferedImage getImage() {
+        return paintPanel.getPaintedImage();
+    }
 }
