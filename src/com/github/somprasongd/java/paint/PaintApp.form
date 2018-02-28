@@ -237,12 +237,10 @@
         <Component class="com.github.somprasongd.java.paint.components.FontChooserPanel" name="fontChooserPanel">
           <Properties>
             <Property name="maximumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-              <Dimension value="[350, 100]"/>
+              <Dimension value="[400, 100]"/>
             </Property>
             <Property name="propName" type="java.lang.String" value="font"/>
           </Properties>
-        </Component>
-        <Component class="javax.swing.JToolBar$Separator" name="jSeparator3">
         </Component>
       </SubComponents>
     </Container>

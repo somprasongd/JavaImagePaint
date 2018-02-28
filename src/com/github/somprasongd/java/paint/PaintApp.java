@@ -105,7 +105,6 @@ public class PaintApp extends javax.swing.JPanel {
         tglBtnDrawNote = new javax.swing.JToggleButton();
         tglBtnDrawText = new javax.swing.JToggleButton();
         fontChooserPanel = new com.github.somprasongd.java.paint.components.FontChooserPanel();
-        jSeparator3 = new javax.swing.JToolBar.Separator();
         panelDraw = new javax.swing.JPanel();
         scrollPane = new javax.swing.JScrollPane();
         paintPanel = new com.github.somprasongd.java.paint.components.PaintPanel();
@@ -257,10 +256,9 @@ public class PaintApp extends javax.swing.JPanel {
         });
         topToolbar.add(tglBtnDrawText);
 
-        fontChooserPanel.setMaximumSize(new java.awt.Dimension(350, 100));
+        fontChooserPanel.setMaximumSize(new java.awt.Dimension(400, 100));
         fontChooserPanel.setPropName("font");
         topToolbar.add(fontChooserPanel);
-        topToolbar.add(jSeparator3);
 
         add(topToolbar, java.awt.BorderLayout.NORTH);
 
@@ -446,7 +444,6 @@ public class PaintApp extends javax.swing.JPanel {
     private javax.swing.JPanel jPanel1;
     private javax.swing.JToolBar.Separator jSeparator1;
     private javax.swing.JToolBar.Separator jSeparator2;
-    private javax.swing.JToolBar.Separator jSeparator3;
     private javax.swing.JToolBar.Separator jSeparator4;
     private javax.swing.JToolBar.Separator jSeparator5;
     private com.github.somprasongd.java.paint.components.LocationPanel locationPanel;
