@@ -48,7 +48,6 @@ import javax.imageio.ImageIO;
 import javax.imageio.ImageWriter;
 import javax.imageio.stream.FileImageOutputStream;
 import javax.imageio.stream.ImageOutputStream;
-import javax.swing.JFileChooser;
 import javax.swing.JScrollPane;
 
 /**
@@ -73,6 +72,7 @@ public class PaintPanel extends javax.swing.JPanel {
     public static final int MODE_COLORPICK = 10;
     public static final int MODE_NOTE = 11;
     public static final int MODE_NONE = 100;
+    public static final int MODE_VIEW_ONLY = 101;
 
     private JScrollPane scrollPane;
     private LocationPanel locationPanel;
@@ -105,8 +105,6 @@ public class PaintPanel extends javax.swing.JPanel {
     private int arcWidth = 0;
     private int arcHeight = 0;
 
-    private JFileChooser saveChooser;
-    private File currentFile;
     private BufferedImage img;
 
     private Point dragDown;
@@ -180,6 +178,9 @@ public class PaintPanel extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     private void formKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_formKeyPressed
+        if (currentMode == MODE_VIEW_ONLY) {
+            return;
+        }
         if (evt.getKeyCode() == KeyEvent.VK_DELETE) {
             deleteSelected();
         }
@@ -192,6 +193,9 @@ public class PaintPanel extends javax.swing.JPanel {
     }//GEN-LAST:event_formKeyPressed
 
     private void formMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_formMouseClicked
+        if (currentMode == MODE_VIEW_ONLY) {
+            return;
+        }
         if (currentMode == MODE_SELECT && evt.getButton() == MouseEvent.BUTTON1) {
             boolean ctrl = (evt.getModifiers() & MouseEvent.CTRL_MASK) == MouseEvent.CTRL_MASK;
             if (!ctrl) {
@@ -234,6 +238,9 @@ public class PaintPanel extends javax.swing.JPanel {
     }//GEN-LAST:event_formMouseClicked
 
     private void formMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_formMousePressed
+        if (currentMode == MODE_VIEW_ONLY) {
+            return;
+        }
         this.requestFocus();
         if ((evt.getModifiersEx() & MouseEvent.BUTTON3_DOWN_MASK) == MouseEvent.BUTTON3_DOWN_MASK) {
             this.dragDown = evt.getPoint();
@@ -384,6 +391,9 @@ public class PaintPanel extends javax.swing.JPanel {
     }//GEN-LAST:event_formMousePressed
 
     private void formMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_formMouseReleased
+        if (currentMode == MODE_VIEW_ONLY) {
+            return;
+        }
         if (currentMode == MODE_ERASE || currentMode == MODE_POINT) {
             mousePoint = new Point((int) (evt.getX() / zoom), (int) (evt.getY() / zoom));
 
@@ -437,6 +447,9 @@ public class PaintPanel extends javax.swing.JPanel {
     }//GEN-LAST:event_formMouseReleased
 
     private void formMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_formMouseEntered
+        if (currentMode == MODE_VIEW_ONLY) {
+            return;
+        }
         if (locationPanel != null) {
             int x = (int) (evt.getX() / zoom);
             int y = (int) (evt.getY() / zoom);
@@ -455,6 +468,9 @@ public class PaintPanel extends javax.swing.JPanel {
     }//GEN-LAST:event_formMouseEntered
 
     private void formMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_formMouseExited
+        if (currentMode == MODE_VIEW_ONLY) {
+            return;
+        }
         if (locationPanel != null) {
             locationPanel.updateLocation(null);
             locationPanel.repaint();
@@ -466,6 +482,9 @@ public class PaintPanel extends javax.swing.JPanel {
     }//GEN-LAST:event_formMouseExited
 
     private void formMouseDragged(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_formMouseDragged
+        if (currentMode == MODE_VIEW_ONLY) {
+            return;
+        }
         drag = true;
         if ((evt.getModifiersEx() & MouseEvent.BUTTON3_DOWN_MASK) == MouseEvent.BUTTON3_DOWN_MASK) {
             if (scrollPane != null) {
@@ -479,19 +498,15 @@ public class PaintPanel extends javax.swing.JPanel {
                 int xMax = this.getWidth() - scrollPane.getViewport().getWidth();
                 int yMax = this.getHeight() - scrollPane.getViewport().getHeight();
                 if (newX < 0) {
-                    System.out.println("darg4");
                     newX = 0;
                 }
                 if (newY < 0) {
-                    System.out.println("darg5");
                     newY = 0;
                 }
                 if (newX > xMax) {
-                    System.out.println("darg6");
                     newX = xMax;
                 }
                 if (newY > yMax) {
-                    System.out.println("darg7");
                     newY = yMax;
                 }
                 scrollPane.getViewport().setViewPosition(new Point(newX, newY));
@@ -596,6 +611,9 @@ public class PaintPanel extends javax.swing.JPanel {
     }//GEN-LAST:event_formMouseDragged
 
     private void formMouseMoved(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_formMouseMoved
+        if (currentMode == MODE_VIEW_ONLY) {
+            return;
+        }
         if (locationPanel != null) {
             int x = (int) (evt.getX() / zoom);
             int y = (int) (evt.getY() / zoom);
@@ -614,6 +632,9 @@ public class PaintPanel extends javax.swing.JPanel {
     }//GEN-LAST:event_formMouseMoved
 
     private void formMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {//GEN-FIRST:event_formMouseWheelMoved
+        if (currentMode == MODE_VIEW_ONLY) {
+            return;
+        }
         if (evt.getWheelRotation() > 0) {
             this.setZoom(this.getZoom() - 0.25);
         }
@@ -1348,7 +1369,7 @@ public class PaintPanel extends javax.swing.JPanel {
         }
         return file;
     }
-    
+
     public BufferedImage getPaintedImage() {
         ArrayList filters = ImageIOFileFilter.getImageWriterFilters();
         ImageIOFileFilter png = null;

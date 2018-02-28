@@ -6,7 +6,6 @@
 package com.github.somprasongd.java.paint;
 
 import com.github.somprasongd.java.paint.components.PaintPanel;
-import com.github.somprasongd.java.paint.utils.ImageIOFileFilter;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Point;
@@ -16,16 +15,15 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Iterator;
-import javax.imageio.ImageWriter;
-import javax.swing.JFileChooser;
 
 /**
  *
  * @author sompr
  */
 public class PaintApp extends javax.swing.JPanel {
+
+    public static final int MODE_VIEW = 0;
+    public static final int MODE_PAINT = 1;
 
     private PropertyChangeListener pclColor = new PropertyChangeListener() {
         @Override
@@ -62,7 +60,6 @@ public class PaintApp extends javax.swing.JPanel {
             }
         }
     };
-    private JFileChooser saveChooser;
 
     /**
      * Creates new form PaintPanel
@@ -475,12 +472,20 @@ public class PaintApp extends javax.swing.JPanel {
     public void setImage(BufferedImage img) {
         paintPanel.setImage(img);
     }
-    
+
     public File getImage(File file) {
         return paintPanel.getPaintedImage(file);
     }
-    
+
     public BufferedImage getImage() {
         return paintPanel.getPaintedImage();
+    }
+
+    public void setMode(int mode) {
+        topToolbar.setVisible(mode == MODE_PAINT);
+        jPanel1.setVisible(mode == MODE_PAINT);
+        if (mode == MODE_VIEW) {
+            paintPanel.setCurrentMode(PaintPanel.MODE_VIEW_ONLY);
+        }
     }
 }
