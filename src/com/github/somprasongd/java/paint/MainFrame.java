@@ -5,15 +5,19 @@
  */
 package com.github.somprasongd.java.paint;
 
+import com.github.somprasongd.java.paint.utils.ImageUtils;
 import java.io.File;
 import javax.swing.JFileChooser;
 import javax.swing.UIManager;
+import javax.swing.filechooser.FileFilter;
 
 /**
  *
  * @author sompr
  */
 public class MainFrame extends javax.swing.JFrame {
+
+    private JFileChooser fc;
 
     /**
      * Creates new form NewJFrame
@@ -59,8 +63,38 @@ public class MainFrame extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void openActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_openActionPerformed
-        JFileChooser fc = new JFileChooser();
-        int result = fc.showOpenDialog(null);
+        if (fc == null) {
+            fc = new JFileChooser();
+            //Add a custom file filter and disable the default
+            //(Accept All) file filter.
+            fc.addChoosableFileFilter(new FileFilter() {
+                //Accept all directories and all gif, jpg, tiff, or png files.
+                @Override
+                public boolean accept(File f) {
+                    if (f.isDirectory()) {
+                        return true;
+                    }
+                    String extension = ImageUtils.getExtension(f);
+                    if (extension != null) {
+                        return extension.equals(ImageUtils.TIFF)
+                                || extension.equals(ImageUtils.TIF)
+                                || extension.equals(ImageUtils.GIF)
+                                || extension.equals(ImageUtils.JPEG)
+                                || extension.equals(ImageUtils.JPG)
+                                || extension.equals(ImageUtils.PNG);
+                    }
+                    return false;
+                }
+
+                //The description of this filter
+                @Override
+                public String getDescription() {
+                    return "Picture Profile";
+                }
+            });
+            fc.setAcceptAllFileFilterUsed(false);
+        }
+        int result = fc.showDialog(this, "Browse Picture");
         if (result == JFileChooser.APPROVE_OPTION) {
             File file = fc.getSelectedFile();
             paintPanel1.setImage(file);
