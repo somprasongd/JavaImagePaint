@@ -113,7 +113,7 @@ public class PaintApp extends javax.swing.JPanel {
         jSeparator4 = new javax.swing.JToolBar.Separator();
         sliderAlpha = new javax.swing.JSlider();
         jSeparator5 = new javax.swing.JToolBar.Separator();
-        jButton1 = new javax.swing.JButton();
+        btnDelete = new javax.swing.JButton();
         locationPanel = new com.github.somprasongd.java.paint.components.LocationPanel();
 
         setLayout(new java.awt.BorderLayout());
@@ -340,17 +340,17 @@ public class PaintApp extends javax.swing.JPanel {
         bottomToolbar.add(sliderAlpha);
         bottomToolbar.add(jSeparator5);
 
-        jButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/github/somprasongd/java/paint/icons/bin.png"))); // NOI18N
-        jButton1.setToolTipText(bundle.getString("DELETE")); // NOI18N
-        jButton1.setFocusable(false);
-        jButton1.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        jButton1.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
+        btnDelete.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/github/somprasongd/java/paint/icons/bin.png"))); // NOI18N
+        btnDelete.setToolTipText(bundle.getString("DELETE")); // NOI18N
+        btnDelete.setFocusable(false);
+        btnDelete.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnDelete.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnDelete.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
+                btnDeleteActionPerformed(evt);
             }
         });
-        bottomToolbar.add(jButton1);
+        bottomToolbar.add(btnDelete);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -420,9 +420,9 @@ public class PaintApp extends javax.swing.JPanel {
         paintPanel.setAlpha(newVal);
     }//GEN-LAST:event_sliderAlphaStateChanged
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+    private void btnDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDeleteActionPerformed
         paintPanel.deleteSelected();
-    }//GEN-LAST:event_jButton1ActionPerformed
+    }//GEN-LAST:event_btnDeleteActionPerformed
 
     private void tglBtnFillColorActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tglBtnFillColorActionPerformed
         paintPanel.setFilled(tglBtnFillColor.isSelected());
@@ -432,12 +432,12 @@ public class PaintApp extends javax.swing.JPanel {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JToolBar bottomToolbar;
     private com.github.somprasongd.java.paint.components.ColorButton btnColor;
+    private javax.swing.JButton btnDelete;
     private javax.swing.JButton btnZoomIn;
     private javax.swing.JButton btnZoomOut;
     private javax.swing.JButton btnZoomReset;
     private javax.swing.ButtonGroup buttonGroupAction;
     private com.github.somprasongd.java.paint.components.FontChooserPanel fontChooserPanel;
-    private javax.swing.JButton jButton1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JToolBar.Separator jSeparator1;
     private javax.swing.JToolBar.Separator jSeparator2;
@@ -483,7 +483,10 @@ public class PaintApp extends javax.swing.JPanel {
 
     public void setMode(int mode) {
         topToolbar.setVisible(mode == MODE_PAINT);
-        jPanel1.setVisible(mode == MODE_PAINT);
+        jSeparator4.setVisible(mode == MODE_PAINT);
+        sliderAlpha.setVisible(mode == MODE_PAINT);
+        jSeparator5.setVisible(mode == MODE_PAINT);
+        btnDelete.setVisible(mode == MODE_PAINT);
         if (mode == MODE_VIEW) {
             paintPanel.setCurrentMode(PaintPanel.MODE_VIEW_ONLY);
         }
