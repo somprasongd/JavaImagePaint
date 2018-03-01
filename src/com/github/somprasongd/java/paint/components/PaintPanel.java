@@ -14,6 +14,7 @@ import com.github.somprasongd.java.paint.objects.AnnotationRectObject;
 import com.github.somprasongd.java.paint.objects.AnnotationTextObject;
 import com.github.somprasongd.java.paint.utils.BufferedImageTool;
 import com.github.somprasongd.java.paint.utils.ImageIOFileFilter;
+import com.github.somprasongd.java.paint.utils.ImageUtils;
 import java.awt.AlphaComposite;
 import java.awt.BasicStroke;
 import java.awt.Color;
@@ -22,6 +23,7 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Image;
 import java.awt.MediaTracker;
 import java.awt.Point;
 import java.awt.RenderingHints;
@@ -48,6 +50,7 @@ import javax.imageio.ImageIO;
 import javax.imageio.ImageWriter;
 import javax.imageio.stream.FileImageOutputStream;
 import javax.imageio.stream.ImageOutputStream;
+import javax.swing.ImageIcon;
 import javax.swing.JScrollPane;
 
 /**
@@ -786,6 +789,14 @@ public class PaintPanel extends javax.swing.JPanel {
             Logger.getLogger(PaintPanel.class.getName()).log(Level.SEVERE, null, ex);
         }
 
+    }
+
+    public void setImage(ImageIcon imageIcon) {
+        setImage(imageIcon.getImage());
+    }
+
+    public void setImage(Image image) {
+        setImage(ImageUtils.toBufferedImage(image));
     }
 
     public void setImage(BufferedImage img) {

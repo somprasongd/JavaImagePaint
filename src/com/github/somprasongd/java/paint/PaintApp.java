@@ -8,6 +8,7 @@ package com.github.somprasongd.java.paint;
 import com.github.somprasongd.java.paint.components.PaintPanel;
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.Image;
 import java.awt.Point;
 import java.awt.Stroke;
 import java.awt.image.BufferedImage;
@@ -15,6 +16,7 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.net.URL;
+import javax.swing.ImageIcon;
 
 /**
  *
@@ -461,14 +463,42 @@ public class PaintApp extends javax.swing.JPanel {
     private javax.swing.JToolBar topToolbar;
     // End of variables declaration//GEN-END:variables
 
+    /**
+     * 
+     * @param url 
+     */
     public void setImage(URL url) {
         paintPanel.setImage(url);
     }
 
+    /**
+     * 
+     * @param file 
+     */
     public void setImage(File file) {
         paintPanel.setImage(file);
     }
+    
+    /**
+     * 
+     * @param imageIcon 
+     */
+    public void setImage(ImageIcon imageIcon) {
+        paintPanel.setImage(imageIcon);
+    }
+    
+    /**
+     * 
+     * @param image 
+     */
+    public void setImage(Image image) {
+        paintPanel.setImage(image);
+    }
 
+    /**
+     * 
+     * @param img 
+     */
     public void setImage(BufferedImage img) {
         paintPanel.setImage(img);
     }
@@ -481,6 +511,10 @@ public class PaintApp extends javax.swing.JPanel {
         return paintPanel.getPaintedImage();
     }
 
+    /**
+     * 
+     * @param mode 
+     */
     public void setMode(int mode) {
         topToolbar.setVisible(mode == MODE_PAINT);
         jSeparator4.setVisible(mode == MODE_PAINT);
