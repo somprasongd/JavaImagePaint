@@ -114,6 +114,8 @@ public class PaintPanel extends javax.swing.JPanel {
     private Cursor preCursor;
     private boolean drag;
     private Point mousePoint;
+    private int x1;
+    private int y1;
 
     /**
      * Creates new form PaintPanel
@@ -331,7 +333,10 @@ public class PaintPanel extends javax.swing.JPanel {
                     }
                     break;
                 case MODE_ERASE: {
-                    Point loc = new Point((int) (evt.getPoint().x / zoom), (int) (evt.getPoint().y / zoom));
+                    x1 = (int) (evt.getPoint().x / zoom);
+                    y1 = (int) (evt.getPoint().y / zoom);
+//                    Point loc = new Point((int) (evt.getPoint().x / zoom), (int) (evt.getPoint().y / zoom));
+                    Point loc = new Point(x1, y1);
                     int startX = loc.x - (eraseRad - 1) / 2;
                     int startY = loc.y - (eraseRad - 1) / 2;
                     int endX = loc.x + (eraseRad - 1) / 2;
@@ -357,7 +362,10 @@ public class PaintPanel extends javax.swing.JPanel {
                     break;
                 }
                 case MODE_POINT: {
-                    Point loc = new Point((int) (evt.getPoint().x / zoom), (int) (evt.getPoint().y / zoom));
+                    x1 = (int) (evt.getPoint().x / zoom);
+                    y1 = (int) (evt.getPoint().y / zoom);
+//                    Point loc = new Point((int) (evt.getPoint().x / zoom), (int) (evt.getPoint().y / zoom));
+                    Point loc = new Point(x1, y1);
                     int startX = loc.x - (eraseRad - 1) / 2;
                     int startY = loc.y - (eraseRad - 1) / 2;
                     int endX = loc.x + (eraseRad - 1) / 2;
@@ -377,10 +385,8 @@ public class PaintPanel extends javax.swing.JPanel {
                     WritableRaster raster = img.getRaster();
                     for (int x = startX; x <= endX; x++) {
                         for (int y = startY; y <= endY; y++) {
-
                             img.setRGB(x, y, this.getDrawColor().getRGB());
                             raster.setSample(x, y, 3, (int) (255 * this.getAlpha()));
-
                         }
                     }
                     break;
@@ -531,7 +537,8 @@ public class PaintPanel extends javax.swing.JPanel {
             switch (currentMode) {
                 case MODE_ERASE: {
                     mousePoint = null;
-                    Point loc = new Point((int) (evt.getPoint().x / zoom), (int) (evt.getPoint().y / zoom));
+//                    Point loc = new Point((int) (evt.getPoint().x / zoom), (int) (evt.getPoint().y / zoom));
+                    Point loc = new Point(x1, y1);
                     int startX = loc.x - (eraseRad - 1) / 2;
                     int startY = loc.y - (eraseRad - 1) / 2;
                     int endX = loc.x + (eraseRad - 1) / 2;
@@ -555,10 +562,15 @@ public class PaintPanel extends javax.swing.JPanel {
                             raster.setSample(x, y, 3, 0);
                         }
                     }
+                    x1 = endX;
+                    y1 = endY;
                     break;
                 }
                 case MODE_POINT: {
-                    Point loc = new Point((int) (evt.getPoint().x / zoom), (int) (evt.getPoint().y / zoom));
+                    int x2 = (int) (evt.getPoint().x / zoom);
+                    int y2 = (int) (evt.getPoint().y / zoom);
+//                    Point loc = new Point((int) (evt.getPoint().x / zoom), (int) (evt.getPoint().y / zoom));
+                    Point loc = new Point(x1, y1);
                     int startX = loc.x - (eraseRad - 1) / 2;
                     int startY = loc.y - (eraseRad - 1) / 2;
                     int endX = loc.x + (eraseRad - 1) / 2;
@@ -583,6 +595,9 @@ public class PaintPanel extends javax.swing.JPanel {
                             raster.setSample(x, y, 3, (int) (255 * this.getAlpha()));
                         }
                     }
+                    x1 = x2;
+                    y1 = y2;
+                    System.out.println("loc: " + loc + ", startX:" + startX + ", startY:" + startY + ", endX:" + endX + ", endY:" + endY);
                     break;
                 }
                 default:

@@ -68,7 +68,7 @@ public class PaintApp extends javax.swing.JPanel {
      */
     public PaintApp() {
         initComponents();
-        tglBtnDraw.setVisible(false);
+//        tglBtnDraw.setVisible(false);
         paintPanel.setScroll(scrollPane);
         paintPanel.setLocationPanel(locationPanel);
         paintPanel.setCurrentMode(PaintPanel.MODE_NONE);
@@ -375,7 +375,7 @@ public class PaintApp extends javax.swing.JPanel {
     }//GEN-LAST:event_tglBtnSelectActionPerformed
 
     private void tglBtnDrawActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tglBtnDrawActionPerformed
-        paintPanel.setCurrentMode(PaintPanel.MODE_FREE_HAND);
+        paintPanel.setCurrentMode(PaintPanel.MODE_POINT);
     }//GEN-LAST:event_tglBtnDrawActionPerformed
 
     private void tglBtnDrawLineActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tglBtnDrawLineActionPerformed
