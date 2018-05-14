@@ -337,10 +337,10 @@ public class PaintPanel extends javax.swing.JPanel {
                     y1 = (int) (evt.getPoint().y / zoom);
 //                    Point loc = new Point((int) (evt.getPoint().x / zoom), (int) (evt.getPoint().y / zoom));
                     Point loc = new Point(x1, y1);
-                    int startX = loc.x - (eraseRad - 1) / 2;
-                    int startY = loc.y - (eraseRad - 1) / 2;
-                    int endX = loc.x + (eraseRad - 1) / 2;
-                    int endY = loc.y + (eraseRad - 1) / 2;
+                    int startX = loc.x - (eraseRad - 0) / 2;
+                    int startY = loc.y - (eraseRad - 0) / 2;
+                    int endX = loc.x + (eraseRad - 0) / 2;
+                    int endY = loc.y + (eraseRad - 0) / 2;
                     if (startX < 0) {
                         startX = 0;
                     }
@@ -537,12 +537,14 @@ public class PaintPanel extends javax.swing.JPanel {
             switch (currentMode) {
                 case MODE_ERASE: {
                     mousePoint = null;
+                    int x2 = (int) (evt.getPoint().x / zoom);
+                    int y2 = (int) (evt.getPoint().y / zoom);
 //                    Point loc = new Point((int) (evt.getPoint().x / zoom), (int) (evt.getPoint().y / zoom));
                     Point loc = new Point(x1, y1);
-                    int startX = loc.x - (eraseRad - 1) / 2;
-                    int startY = loc.y - (eraseRad - 1) / 2;
-                    int endX = loc.x + (eraseRad - 1) / 2;
-                    int endY = loc.y + (eraseRad - 1) / 2;
+                    int startX = loc.x - (eraseRad - 0) / 2;
+                    int startY = loc.y - (eraseRad - 0) / 2;
+                    int endX = loc.x + (eraseRad - 0) / 2;
+                    int endY = loc.y + (eraseRad - 0) / 2;
                     if (startX < 0) {
                         startX = 0;
                     }
@@ -562,8 +564,8 @@ public class PaintPanel extends javax.swing.JPanel {
                             raster.setSample(x, y, 3, 0);
                         }
                     }
-                    x1 = endX;
-                    y1 = endY;
+                    x1 = x2;
+                    y1 = y2;
                     break;
                 }
                 case MODE_POINT: {

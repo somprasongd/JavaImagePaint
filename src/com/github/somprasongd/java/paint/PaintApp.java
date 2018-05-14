@@ -90,9 +90,11 @@ public class PaintApp extends javax.swing.JPanel {
 
         buttonGroupAction = new javax.swing.ButtonGroup();
         topToolbar = new javax.swing.JToolBar();
+        tglBtnDraw = new javax.swing.JToggleButton();
+        tglBtnErase = new javax.swing.JToggleButton();
+        jSeparator3 = new javax.swing.JToolBar.Separator();
         tglBtnSelect = new javax.swing.JToggleButton();
         jSeparator1 = new javax.swing.JToolBar.Separator();
-        tglBtnDraw = new javax.swing.JToggleButton();
         tglBtnDrawLine = new javax.swing.JToggleButton();
         tglBtnDrawRectangle = new javax.swing.JToggleButton();
         tglBtnDrawOval = new javax.swing.JToggleButton();
@@ -123,9 +125,36 @@ public class PaintApp extends javax.swing.JPanel {
         topToolbar.setFloatable(false);
         topToolbar.setRollover(true);
 
+        buttonGroupAction.add(tglBtnDraw);
+        tglBtnDraw.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/github/somprasongd/java/paint/icons/draw_free_hand.png"))); // NOI18N
+        java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("com/github/somprasongd/java/paint/Bundle"); // NOI18N
+        tglBtnDraw.setToolTipText(bundle.getString("DRAW")); // NOI18N
+        tglBtnDraw.setFocusable(false);
+        tglBtnDraw.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        tglBtnDraw.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        tglBtnDraw.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                tglBtnDrawActionPerformed(evt);
+            }
+        });
+        topToolbar.add(tglBtnDraw);
+
+        buttonGroupAction.add(tglBtnErase);
+        tglBtnErase.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/github/somprasongd/java/paint/icons/erase.png"))); // NOI18N
+        tglBtnErase.setToolTipText(bundle.getString("ERASE")); // NOI18N
+        tglBtnErase.setFocusable(false);
+        tglBtnErase.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        tglBtnErase.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        tglBtnErase.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                tglBtnEraseActionPerformed(evt);
+            }
+        });
+        topToolbar.add(tglBtnErase);
+        topToolbar.add(jSeparator3);
+
         buttonGroupAction.add(tglBtnSelect);
         tglBtnSelect.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/github/somprasongd/java/paint/icons/draw_cursor.png"))); // NOI18N
-        java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("com/github/somprasongd/java/paint/Bundle"); // NOI18N
         tglBtnSelect.setToolTipText(bundle.getString("SELECT")); // NOI18N
         tglBtnSelect.setFocusable(false);
         tglBtnSelect.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
@@ -137,19 +166,6 @@ public class PaintApp extends javax.swing.JPanel {
         });
         topToolbar.add(tglBtnSelect);
         topToolbar.add(jSeparator1);
-
-        buttonGroupAction.add(tglBtnDraw);
-        tglBtnDraw.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/github/somprasongd/java/paint/icons/draw_free_hand.png"))); // NOI18N
-        tglBtnDraw.setToolTipText(bundle.getString("DRAW")); // NOI18N
-        tglBtnDraw.setFocusable(false);
-        tglBtnDraw.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        tglBtnDraw.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        tglBtnDraw.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                tglBtnDrawActionPerformed(evt);
-            }
-        });
-        topToolbar.add(tglBtnDraw);
 
         buttonGroupAction.add(tglBtnDrawLine);
         tglBtnDrawLine.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/github/somprasongd/java/paint/icons/draw_line.png"))); // NOI18N
@@ -430,6 +446,10 @@ public class PaintApp extends javax.swing.JPanel {
         paintPanel.setFilled(tglBtnFillColor.isSelected());
     }//GEN-LAST:event_tglBtnFillColorActionPerformed
 
+    private void tglBtnEraseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tglBtnEraseActionPerformed
+        paintPanel.setCurrentMode(PaintPanel.MODE_ERASE);
+    }//GEN-LAST:event_tglBtnEraseActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JToolBar bottomToolbar;
@@ -443,6 +463,7 @@ public class PaintApp extends javax.swing.JPanel {
     private javax.swing.JPanel jPanel1;
     private javax.swing.JToolBar.Separator jSeparator1;
     private javax.swing.JToolBar.Separator jSeparator2;
+    private javax.swing.JToolBar.Separator jSeparator3;
     private javax.swing.JToolBar.Separator jSeparator4;
     private javax.swing.JToolBar.Separator jSeparator5;
     private com.github.somprasongd.java.paint.components.LocationPanel locationPanel;
@@ -458,6 +479,7 @@ public class PaintApp extends javax.swing.JPanel {
     private javax.swing.JToggleButton tglBtnDrawOval;
     private javax.swing.JToggleButton tglBtnDrawRectangle;
     private javax.swing.JToggleButton tglBtnDrawText;
+    private javax.swing.JToggleButton tglBtnErase;
     private javax.swing.JToggleButton tglBtnFillColor;
     private javax.swing.JToggleButton tglBtnSelect;
     private javax.swing.JToolBar topToolbar;
